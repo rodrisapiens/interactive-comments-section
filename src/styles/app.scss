@@ -1,0 +1,57 @@
+*,
+::after,
+::before {
+    box-sizing: border-box;
+    margin: 0;
+    font-family: "Rubik", sans-serif;
+}
+body {
+    display: grid;
+    justify-content: center;
+    align-items: baseline;
+    width: 100vw;
+    height: 100vh;
+    padding: 2rem;
+    background-color: #f5f6fa;
+}
+.app {
+    text-align: center;
+}
+.inputBox {
+    display: grid;
+    gap: 1rem;
+    background-color: white;
+    padding: 1rem;
+    border-radius: 5px;
+}
+.comentInput {
+    outline: none;
+    border: solid;
+    border-color: #cdcdcd;
+    border-width: thin;
+    border-radius: 5px;
+    height: 6rem;
+    width: 80vw;
+    padding-inline: 1rem;
+}
+.secondRaw {
+    display: flex;
+    justify-content: space-between;
+    height: fit-content;
+    align-items: center;
+}
+.user {
+    width: 2em;
+    height: 2em;
+}
+.send {
+    background-color: #595dbe;
+    border-style: none;
+    border-radius: 5px;
+    width: 4rem;
+    color: white;
+    height: 3rem;
+    width: 7rem;
+    font-size: 1.2em;
+    font-weight: 500;
+}
