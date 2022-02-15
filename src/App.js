@@ -1,21 +1,73 @@
 import './styles/app.css';
-import { useState } from "react";
+import { useState,useReducer ,useEffect} from "react";
 import userImage from "./images/avatars/image-juliusomo.png";
-function App() {
-  const [comment, setComment] = useState("");
-  function handleInput(e) {
-    setComment(e.currentTarget.value);
+import CommentBox from "./components/CommentBox.js";
+import { AppTimeContext } from './Context';
+export const actions = {
+  addComment: "addComment",
+  toggle: "toggle",
+  delete: "delete",
+  clear: "clear",
+  copy:"copy"
+}
+function reducer(listComents, action) {
+  switch (action.type) {
+    case actions.addComment:
+      {  
+        return [...listComents, createNewComment(action.payLoad.newComment,action.payLoad.photo,action.payLoad.time,action.payLoad.name)]
+      }
+      default:
+        return listComents;
   }
+}
+function createNewComment(newComment,photo,time,name)
+{
+  return {key:Date.now(),photo:photo,name:name,time:time,comment:newComment}
+}
+function App() {////////////////////////////////////////7
+  const [newComment, setNewComment] = useState("");
+  const [listComents, dispatch] = useReducer(reducer, []);
+  const [appTime,setAppTime]=useState(Date.now());
+  const [sent,setSent]=useState(false);
+  function handleInput(e) {
+    setNewComment(e.currentTarget.value);
+  }
+  function handleSendComent()
+  { 
+    setAppTime(Date.now());
+    dispatch({type:actions.addComment,payLoad:{newComment:newComment,time:Date.now(),photo:userImage,name:"juliusomo"}})
+    setNewComment("")
+  }
+  
+/*   function handleUpdateAppTime()
+{
+  setAppTime(Date.now());
+}
+useEffect(() => {
+  handleUpdateAppTime()
+
+}, [newComment]) */
+
   return (
-    <div className="App">
+    <AppTimeContext.Provider value={{appTime,setAppTime}}>
+    <div className="app">
+      <div className="comments">
+      {
+        listComents.map((comentObj)=>
+        {
+          return <CommentBox key={comentObj.key}photo={comentObj.photo}name={comentObj.name}time={appTime}comment={comentObj.comment} mine={true}sent={sent}/>
+        })
+      }
+      </div>
       <div className="inputBox">
-        <input type="text" required placeholder='Add a comment...' className='comentInput' onChange={handleInput} value={comment}></input>
+        <textarea type="text" required placeholder='Add a comment...' className='comentInput' onChange={handleInput} value={newComment}></textarea>
         <div className="secondRaw">
           <img src={userImage} alt="" className="user" />
-          <button className="send">SEND</button>
+          <button className="send" onClick={handleSendComent}>SEND</button>
         </div>
       </div>
     </div>
+    </AppTimeContext.Provider>
   );
 }
 

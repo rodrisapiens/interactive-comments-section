@@ -1,0 +1,112 @@
+.CommentBox {
+  display: -ms-grid;
+  display: grid;
+  background-color: white;
+  border-radius: 5px;
+  padding: 1rem;
+}
+
+.firstColumn {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 15% 29% 1fr 1fr;
+      grid-template-columns: 15% 29% 1fr 1fr;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.thumnail {
+  width: 2rem;
+}
+
+.name {
+  font-weight: 500;
+}
+
+.you {
+  width: 2.5rem;
+  background-color: #595DC1;
+  text-align: center;
+  border-radius: 2px;
+  color: white;
+  font-size: 0.9em;
+  padding: 1px;
+}
+
+.time {
+  color: #7B8086;
+}
+
+.comment {
+  color: #7B8086;
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+.thirdColumn {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.buttonsAndLikes {
+  background-color: #F5F6FA;
+  border-radius: 10px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  height: 2.5rem;
+}
+
+.plus {
+  background-color: transparent;
+  border-style: none;
+  width: 2.5rem;
+}
+
+.numerLikes {
+  color: #595A92;
+  font-weight: 500;
+  width: 1rem;
+  -ms-flex-item-align: center;
+      -ms-grid-row-align: center;
+      align-self: center;
+  text-align: center;
+}
+
+.minus {
+  background-color: transparent;
+  border-style: none;
+  width: 2.5rem;
+}
+
+.minus > svg {
+  vertical-align: middle;
+  margin-bottom: 1px;
+}
+
+.delete {
+  font-family: inherit;
+  color: #C36C75;
+  font-weight: 500;
+  background-color: transparent;
+  border-style: none;
+  font-size: 1em;
+}
+
+.edit {
+  font-family: inherit;
+  color: #5357B6;
+  font-weight: 500;
+  background-color: transparent;
+  border-style: none;
+  font-size: 1em;
+}
+/*# sourceMappingURL=commentBox.css.map */
