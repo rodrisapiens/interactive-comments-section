@@ -26,7 +26,7 @@
 
 .you {
   width: 2.5rem;
-  background-color: #595DC1;
+  background-color: #595dc1;
   text-align: center;
   border-radius: 2px;
   color: white;
@@ -35,11 +35,15 @@
 }
 
 .time {
-  color: #7B8086;
+  color: #7b8086;
+  width: -webkit-max-content;
+  width: -moz-max-content;
+  width: max-content;
+  justify-self: flex-start;
 }
 
 .comment {
-  color: #7B8086;
+  color: #7b8086;
   margin-top: 1em;
   margin-bottom: 1em;
 }
@@ -57,7 +61,7 @@
 }
 
 .buttonsAndLikes {
-  background-color: #F5F6FA;
+  background-color: #f5f6fa;
   border-radius: 10px;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -72,7 +76,7 @@
 }
 
 .numerLikes {
-  color: #595A92;
+  color: #595a92;
   font-weight: 500;
   width: 1rem;
   -ms-flex-item-align: center;
@@ -94,7 +98,7 @@
 
 .delete {
   font-family: inherit;
-  color: #C36C75;
+  color: #c36c75;
   font-weight: 500;
   background-color: transparent;
   border-style: none;
@@ -103,7 +107,7 @@
 
 .edit {
   font-family: inherit;
-  color: #5357B6;
+  color: #5357b6;
   font-weight: 500;
   background-color: transparent;
   border-style: none;

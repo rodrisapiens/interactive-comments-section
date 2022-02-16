@@ -13,8 +13,7 @@ function CommentBox({ name, comment, photo, time, mine,sent }) {
     const [likes, setLikes] = useState(0);
     const [ownTime, setOwnTime] = useState(Date.now());
     const [timeAgo, setTimeAgo] = useState(0);
-/*     const[showTimeAgo,setShowTimeAgo]=useState("now");
- */    const {appTime,setAppTime}=useContext(AppTimeContext)
+    const {appTime,setAppTime}=useContext(AppTimeContext)
     useEffect(() => {
         setOwnTime(Date.now())
     }, [])
@@ -29,7 +28,23 @@ function CommentBox({ name, comment, photo, time, mine,sent }) {
             response = seconds+" seconds ago"
         }
         if (seconds > 60) {
-            response = Math.round(seconds / 60) +" minutes ago"
+            if(Math.round(seconds / 60)>1){
+                response = Math.round(seconds / 60) +" minutes ago"
+            }
+else{
+    response = Math.round(seconds / 60) +" minute ago"
+
+}
+        }
+        if(seconds>3600){
+            if(Math.round(seconds/3600)>1)
+            {
+                response=Math.round(seconds/3600)+" hours ago"
+            }
+            else
+            {
+                response=Math.round(seconds/3600)+" hour ago"
+            }
         }
         return(response);
     }

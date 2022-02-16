@@ -1,95 +1,84 @@
-.CommentBox{
+.CommentBox {
     display: grid;
     background-color: white;
     border-radius: 5px;
     padding: 1rem;
 }
-.firstColumn
-{
+.firstColumn {
     display: grid;
-grid-template-columns: 15% 29% 1fr 1fr;
-align-items: center;
+    grid-template-columns: 15% 29% 1fr 1fr;
+    align-items: center;
 }
-.thumnail
-{
+.thumnail {
     width: 2rem;
 }
-.name
-{
+.name {
     font-weight: 500;
 }
-.you
-{
+.you {
     width: 2.5rem;
-background-color: #595DC1;
-text-align: center;
-border-radius: 2px;
-color: white;
-font-size: 0.9em;
-padding: 1px;
+    background-color: #595dc1;
+    text-align: center;
+    border-radius: 2px;
+    color: white;
+    font-size: 0.9em;
+    padding: 1px;
 }
-.time
-{
-    color: #7B8086;
+.time {
+    color: #7b8086;
+    width: max-content;
+    justify-self: flex-start;
 }
-.comment
-{
-    color: #7B8086;
-margin-top: 1em;
-margin-bottom: 1em;
+.comment {
+    color: #7b8086;
+    margin-top: 1em;
+    margin-bottom: 1em;
 }
-.thirdColumn
-{
+.thirdColumn {
     display: flex;
-justify-content: space-between;
-align-items: center;
+    justify-content: space-between;
+    align-items: center;
 }
-.buttonsAndLikes
-{
-    background-color: #F5F6FA;
-border-radius: 10px;
-display: flex;
-height: 2.5rem;
+.buttonsAndLikes {
+    background-color: #f5f6fa;
+    border-radius: 10px;
+    display: flex;
+    height: 2.5rem;
 }
-.plus
-{
+.plus {
     background-color: transparent;
-border-style: none;
-width: 2.5rem;
+    border-style: none;
+    width: 2.5rem;
 }
-.numerLikes
-{
-    color: #595A92;
-font-weight: 500;
-width: 1rem;
-align-self: center;
-text-align: center;
+.numerLikes {
+    color: #595a92;
+    font-weight: 500;
+    width: 1rem;
+    align-self: center;
+    text-align: center;
 }
-.minus
-{
+.minus {
     background-color: transparent;
-border-style: none;
-width: 2.5rem;
+    border-style: none;
+    width: 2.5rem;
 }
-.minus>svg{
+.minus > svg {
     vertical-align: middle;
     margin-bottom: 1px;
 }
-.delete
-{
+.delete {
     font-family: inherit;
-    color: #C36C75;
+    color: #c36c75;
     font-weight: 500;
     background-color: transparent;
     border-style: none;
     font-size: 1em;
-  }
-.edit
-{
+}
+.edit {
     font-family: inherit;
-color: #5357B6;
-font-weight: 500;
-background-color: transparent;
-border-style: none;
-font-size: 1em;
+    color: #5357b6;
+    font-weight: 500;
+    background-color: transparent;
+    border-style: none;
+    font-size: 1em;
 }
