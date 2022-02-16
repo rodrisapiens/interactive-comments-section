@@ -16,6 +16,11 @@ function reducer(listComents, action) {
       {  
         return [...listComents, createNewComment(action.payLoad.newComment,action.payLoad.photo,action.payLoad.time,action.payLoad.name)]
       }
+      case actions.delete:
+        {
+          console.log("delete");
+          return listComents.filter((comment)=>{return comment.key!==action.payLoad.id})
+        }
       default:
         return listComents;
   }
@@ -39,15 +44,6 @@ function App() {////////////////////////////////////////7
     setNewComment("")
   }
   
-/*   function handleUpdateAppTime()
-{
-  setAppTime(Date.now());
-}
-useEffect(() => {
-  handleUpdateAppTime()
-
-}, [newComment]) */
-
   return (
     <AppTimeContext.Provider value={{appTime,setAppTime}}>
     <div className="app">
@@ -55,7 +51,7 @@ useEffect(() => {
       {
         listComents.map((comentObj)=>
         {
-          return <CommentBox key={comentObj.key}photo={comentObj.photo}name={comentObj.name}time={appTime}comment={comentObj.comment} mine={true}sent={sent}/>
+          return <CommentBox key={comentObj.key}photo={comentObj.photo}name={comentObj.name}comment={comentObj.comment} mine={true} dispatch={dispatch}id={comentObj.key}/>
         })
       }
       </div>

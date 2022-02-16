@@ -1,0 +1,70 @@
+.deleteboxBG {
+  position: absolute;
+  z-index: 3;
+  background-color: rgba(0, 0, 0, 0.5);
+  width: 100vw;
+  top: 0;
+  left: 0;
+  height: 100%;
+  display: -ms-grid;
+  display: grid;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  justify-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  padding: 1em;
+}
+
+.deleteBox {
+  background-color: white;
+  border-radius: 5px;
+  padding: 1.5em;
+  display: -ms-grid;
+  display: grid;
+  gap: 1em;
+}
+
+.titleDelete {
+  font-size: 1.2em;
+  color: #35414d;
+}
+
+.textDelete {
+  color: #7b8086;
+}
+
+.buttonsDelete {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 1fr 1fr;
+      grid-template-columns: 1fr 1fr;
+  gap: 1em;
+}
+
+.noCancel {
+  background-color: #68727e;
+  border-style: none;
+  width: 9em;
+  font-family: inherit;
+  color: white;
+  height: 3em;
+  font-weight: 500;
+  font-size: 1em;
+  border-radius: 5px;
+}
+
+.yesDelete {
+  background-color: #ee6368;
+  border-style: none;
+  width: 9em;
+  font-family: inherit;
+  color: white;
+  height: 3em;
+  font-weight: 500;
+  font-size: 1em;
+  border-radius: 5px;
+}
+/*# sourceMappingURL=deleteBox.css.map */

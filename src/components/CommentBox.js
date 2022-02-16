@@ -6,14 +6,16 @@ import { ReactComponent as IconDelete } from "../images/icon-delete.svg";
 import { ReactComponent as IconEdit } from "../images/icon-edit.svg";
 import { AppTimeContext } from '../Context';
 import "../styles/commentBox.css";
+import DeleteBox from './DeleteBox';
 
 
 
-function CommentBox({ name, comment, photo, time, mine,sent }) {
+function CommentBox({ id,name, comment, photo, mine,dispatch}) {
     const [likes, setLikes] = useState(0);
     const [ownTime, setOwnTime] = useState(Date.now());
     const [timeAgo, setTimeAgo] = useState(0);
     const {appTime,setAppTime}=useContext(AppTimeContext)
+    const [showDeleteBox,setShowDeleteBox]=useState(false);
     useEffect(() => {
         setOwnTime(Date.now())
     }, [])
@@ -56,8 +58,8 @@ else{
     function handleShow() {
         if (mine) {
             return <div className='myFoot'>
-                <IconDelete />
-                <button className="delete">Delete</button>
+                <IconDelete onClick={()=>{setShowDeleteBox(true)}}/>
+                <button className="delete" onClick={()=>{setShowDeleteBox(true)}}>Delete</button>
                 <IconEdit />
                 <button className="edit">Edit</button>
             </div>
@@ -70,6 +72,7 @@ else{
         }
     }
     return (
+        <>
         <div className='CommentBox'>
             <div className="firstColumn">
                 <img src={photo} alt="" className="thumnail" />
@@ -94,6 +97,8 @@ else{
 
             </div>
         </div>
+        {showDeleteBox&&<DeleteBox setShowDeleteBoxOff={setShowDeleteBox} id={id}dispatch={dispatch}/>}
+        </>
     )
 }
 
