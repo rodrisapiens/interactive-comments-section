@@ -8,6 +8,7 @@ export const actions = {
   toggle: "toggle",
   delete: "delete",
   clear: "clear",
+  upDate:"upDate",
   copy:"copy"
 }
 function reducer(listComents, action) {
@@ -21,6 +22,14 @@ function reducer(listComents, action) {
           console.log("delete");
           return listComents.filter((comment)=>{return comment.key!==action.payLoad.id})
         }
+        case actions.upDate:
+          return listComents.map((comentObj)=>{
+            if(comentObj.key===action.payLoad.id)
+            {
+              comentObj.comment=action.payLoad.upDatedComment;
+            }
+            return comentObj;
+          })
       default:
         return listComents;
   }

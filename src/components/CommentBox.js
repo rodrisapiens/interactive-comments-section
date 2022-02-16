@@ -7,6 +7,7 @@ import { ReactComponent as IconEdit } from "../images/icon-edit.svg";
 import { AppTimeContext } from '../Context';
 import "../styles/commentBox.css";
 import DeleteBox from './DeleteBox';
+import { actions } from '../App';
 
 
 
@@ -16,6 +17,8 @@ function CommentBox({ id,name, comment, photo, mine,dispatch}) {
     const [timeAgo, setTimeAgo] = useState(0);
     const {appTime,setAppTime}=useContext(AppTimeContext)
     const [showDeleteBox,setShowDeleteBox]=useState(false);
+    const[edit,setEdit]=useState(false);
+    const[upDatedComment,setUpDatedComment]=useState(comment);
     useEffect(() => {
         setOwnTime(Date.now())
     }, [])
@@ -60,8 +63,8 @@ else{
             return <div className='myFoot'>
                 <IconDelete onClick={()=>{setShowDeleteBox(true)}}/>
                 <button className="delete" onClick={()=>{setShowDeleteBox(true)}}>Delete</button>
-                <IconEdit />
-                <button className="edit">Edit</button>
+                <IconEdit onClick={()=>{setEdit(!edit);}}/>
+                <button className="edit" onClick={()=>{setEdit(!edit);dispatch({type:actions.upDate,payLoad:{id:id,upDatedComment:upDatedComment}})}}>{edit?"Done":"Edit"}</button>
             </div>
         }
         else {
@@ -70,6 +73,11 @@ else{
                 <button className="reply">Reply</button>
             </div>
         }
+    }
+    function handleUpDateComment(e)
+    {
+        console.log(e.currentTarget.value);
+       setUpDatedComment(e.currentTarget.value)
     }
     return (
         <>
@@ -80,7 +88,8 @@ else{
                 <p className="you">{mine ? "you" : ""}</p>
                 <p className="time">{ShowTimeAgo()}</p>
             </div>
-            <p className="comment">{comment}</p>
+            {!edit&&<p className="comment">{comment}</p>}
+            {edit&&<textarea className="comment" value={upDatedComment}onChange={(e)=>{handleUpDateComment(e);}}></textarea>}
             <div className="thirdColumn">
                 <div className="buttonsAndLikes">
                     <button className="plus" onClick={() => { setLikes(likes + 1) }}><IconPlus /></button>
