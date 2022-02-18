@@ -39,7 +39,6 @@
   width: -webkit-max-content;
   width: -moz-max-content;
   width: max-content;
-  justify-self: flex-start;
 }
 
 .comment {
@@ -104,6 +103,12 @@
   background-color: transparent;
   border-style: none;
   font-size: 1em;
+  margin-right: 0.5em;
+}
+
+.delete:hover {
+  -webkit-filter: opacity(70%);
+          filter: opacity(70%);
 }
 
 .edit {
@@ -113,5 +118,78 @@
   background-color: transparent;
   border-style: none;
   font-size: 1em;
+}
+
+.edit:hover {
+  -webkit-filter: opacity(70%);
+          filter: opacity(70%);
+}
+
+.reply {
+  background-color: transparent;
+  color: #686cbf;
+  font-family: inherit;
+  font-weight: 500;
+  border-style: none;
+  font-size: 1em;
+  margin-left: 0.3em;
+}
+
+.reply:hover {
+  -webkit-filter: opacity(70%);
+          filter: opacity(70%);
+}
+
+.elseFoot > svg:hover {
+  -webkit-filter: opacity(70%);
+          filter: opacity(70%);
+}
+
+.myFoot > svg:hover {
+  -webkit-filter: opacity(70%);
+          filter: opacity(70%);
+}
+
+.subComents {
+  border-left: solid;
+  border-left-color: currentcolor;
+  border-left-width: medium;
+  border-left-color: currentcolor;
+  border-left-width: medium;
+  border-color: #d4d4d4;
+  border-width: medium;
+  display: -ms-grid;
+  display: grid;
+  gap: 1em;
+  justify-items: end;
+}
+
+.subCommentBox {
+  display: -ms-grid;
+  display: grid;
+  background-color: white;
+  border-radius: 5px;
+  padding: 1rem;
+  width: 90%;
+}
+
+.commentInputB {
+  outline: none;
+  border: solid;
+  border-color: #cdcdcd;
+  border-width: thin;
+  border-radius: 5px;
+  height: 6rem;
+  padding: 1rem;
+}
+
+.inputBoxB {
+  display: -ms-grid;
+  display: grid;
+  gap: 1rem;
+  background-color: white;
+  padding: 1rem;
+  border-radius: 5px;
+  width: 90%;
 }
 /*# sourceMappingURL=commentBox.css.map */

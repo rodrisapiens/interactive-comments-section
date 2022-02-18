@@ -27,7 +27,6 @@
 .time {
     color: #7b8086;
     width: max-content;
-    justify-self: flex-start;
 }
 .comment {
     color: #7b8086;
@@ -74,6 +73,10 @@
     background-color: transparent;
     border-style: none;
     font-size: 1em;
+    margin-right: 0.5em;
+}
+.delete:hover {
+    filter: opacity(70%);
 }
 .edit {
     font-family: inherit;
@@ -82,4 +85,63 @@
     background-color: transparent;
     border-style: none;
     font-size: 1em;
+}
+.edit:hover {
+    filter: opacity(70%);
+}
+.reply {
+    background-color: transparent;
+    color: #686cbf;
+    font-family: inherit;
+    font-weight: 500;
+    border-style: none;
+    font-size: 1em;
+    margin-left: 0.3em;
+}
+.reply:hover {
+    filter: opacity(70%);
+}
+.elseFoot > svg:hover {
+    filter: opacity(70%);
+}
+.myFoot > svg:hover {
+    filter: opacity(70%);
+}
+.subComents {
+    border-left: solid;
+    border-left-color: currentcolor;
+    border-left-width: medium;
+    border-left-color: currentcolor;
+    border-left-width: medium;
+    border-color: #d4d4d4;
+    border-width: medium;
+    display: grid;
+    gap: 1em;
+    justify-items: end;
+}
+.subCommentBox {
+    display: grid;
+    background-color: white;
+    border-radius: 5px;
+    padding: 1rem;
+    width: 90%;
+}
+.commentInputB
+{
+    outline: none;
+    border: solid;
+    border-color: #cdcdcd;
+    border-width: thin;
+    border-radius: 5px;
+    height: 6rem;
+    padding: 1rem;
+}
+.inputBoxB
+{
+    display: grid;
+    gap: 1rem;
+    background-color: white;
+    padding: 1rem;
+    border-radius: 5px;
+    width: 90%;
 }

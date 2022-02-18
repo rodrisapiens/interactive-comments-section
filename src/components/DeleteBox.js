@@ -1,7 +1,7 @@
 import React from 'react'
 import "../styles/deleteBox.css";
 import { actions } from '../App';
-function DeleteBox({setShowDeleteBoxOff,dispatch,id}) {
+function DeleteBox({ setShowDeleteBoxOff, dispatch, id,father,subDispatch }) {
     return (
         <div className='deleteboxBG'>
             <div className='deleteBox'>
@@ -11,8 +11,8 @@ function DeleteBox({setShowDeleteBoxOff,dispatch,id}) {
                     and can't be undone.
                 </p>
                 <div className="buttonsDelete">
-                    <button className="noCancel" onClick={()=>{setShowDeleteBoxOff(false)}}>NO,CANCEL</button>
-                    <button className="yesDelete"onClick={()=>{dispatch({type:actions.delete,payLoad:{id:id}});setShowDeleteBoxOff(false)}}>YES,DELETE</button>
+                    <button className="noCancel" onClick={() => { setShowDeleteBoxOff(false) }}>NO,CANCEL</button>
+                    <button className="yesDelete" onClick={() => {father?dispatch({ type: actions.delete, payLoad: { id: id } }):subDispatch({ type: actions.delete, payLoad: { id: id } }); setShowDeleteBoxOff(false) }}>YES,DELETE</button>
                 </div>
             </div>
         </div>
