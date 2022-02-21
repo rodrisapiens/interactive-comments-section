@@ -24,6 +24,7 @@ body {
     background-color: white;
     padding: 1rem;
     border-radius: 5px;
+    
 }
 .comentInput {
     outline: none;
@@ -34,6 +35,7 @@ body {
     height: 6rem;
     width: 80vw;
     padding: 1rem;
+    max-width: 35em;
 }
 .secondRaw {
     display: flex;
@@ -61,5 +63,5 @@ body {
 }
 .comments {
     display: grid;
-    gap: 1em;
+    gap: .5em;
 }

@@ -46,6 +46,7 @@ body {
   height: 6rem;
   width: 80vw;
   padding: 1rem;
+  max-width: 35em;
 }
 
 .secondRaw {
@@ -88,6 +89,6 @@ body {
 .comments {
   display: -ms-grid;
   display: grid;
-  gap: 1em;
+  gap: .5em;
 }
 /*# sourceMappingURL=app.css.map */

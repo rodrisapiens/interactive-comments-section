@@ -6,7 +6,7 @@ import { ReactComponent as IconDelete } from "../images/icon-delete.svg";
 import { ReactComponent as IconEdit } from "../images/icon-edit.svg";
 import userImage from "../images/avatars/image-juliusomo.png";
 import DeleteBox from './DeleteBox';
-import { AppTimeContext } from '../Context';
+import { AppTimeContext, CurrentUserContext } from '../Context';
 import "../styles/commentBox.css";
 import { actions } from '../App';
 function SubCommentBox({photo, name, comment, mine,subDispatch, id,setAppTime}) {//////////////
@@ -14,6 +14,7 @@ function SubCommentBox({photo, name, comment, mine,subDispatch, id,setAppTime}) 
     const [ownTime, setOwnTime] = useState(Date.now());
     const [timeAgo, setTimeAgo] = useState(0);
     const { appTime } = useContext(AppTimeContext)
+    const { currentUser } = useContext(CurrentUserContext)
     const [showDeleteBox, setShowDeleteBox] = useState(false);
     const [edit, setEdit] = useState(false);
     const [upDatedComment, setUpDatedComment] = useState(comment);
@@ -82,6 +83,7 @@ function SubCommentBox({photo, name, comment, mine,subDispatch, id,setAppTime}) 
   function HandleReply()
   {
     setReply(true);
+    setNewComment(`@${name} `);
   }
   function handleUpDateComment(e) {
     console.log(e.currentTarget.value);
@@ -96,7 +98,7 @@ function handleInput(e)
             <div className='subCommentBox'>
                 <div className="firstColumn">
                     <img src={photo} alt="" className="thumnail" />
-                    <p className="name">{name}</p>
+                    <p className="name">{currentUser}</p>
                     {mine && <p className="you">you</p>}
                     <p className="time">{ShowTimeAgo()}</p>
                 </div>

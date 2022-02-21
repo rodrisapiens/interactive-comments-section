@@ -160,7 +160,7 @@
   border-width: medium;
   display: -ms-grid;
   display: grid;
-  gap: 1em;
+  gap: .5em;
   justify-items: end;
 }
 

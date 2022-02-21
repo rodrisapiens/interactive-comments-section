@@ -3,6 +3,7 @@ import { useState, useReducer, useEffect } from "react";
 import userImage from "./images/avatars/image-juliusomo.png";
 import CommentBox from "./components/CommentBox.js";
 import { AppTimeContext } from './Context';
+import { CurrentUserContext } from './Context';
 export const actions = {
   addComment: "addComment",
   toggle: "toggle",
@@ -41,17 +42,19 @@ function App() {////////////////////////////////////////7
   const [listComents, dispatch] = useReducer(reducer, []);
   const [appTime, setAppTime] = useState(Date.now());
   const [mine,setMine]=useState(false);
+  const[currentUser,setCurrentUser]=useState("pepo")
   function handleInput(e) {
     setNewComment(e.currentTarget.value);
   }
   function handleSendComent() {
     setAppTime(Date.now());
-    dispatch({ type: actions.addComment, payLoad: { newComment: newComment, time: Date.now(), photo: userImage, name: "juliusomo" } })
+    dispatch({ type: actions.addComment, payLoad: { newComment: newComment, time: Date.now(), photo: userImage, name: currentUser } })
     setNewComment("")
   }
 
   return (
     <AppTimeContext.Provider value={{ appTime, setAppTime }}>
+      <CurrentUserContext.Provider value={{currentUser,setCurrentUser}}>
       <div className="app">
         <div className="comments">
           {
@@ -69,6 +72,7 @@ function App() {////////////////////////////////////////7
         </div>
         <button className="reply"onClick={()=>{setMine(!mine)}}>MINE</button>
       </div>
+      </CurrentUserContext.Provider>
     </AppTimeContext.Provider>
   );
 }
