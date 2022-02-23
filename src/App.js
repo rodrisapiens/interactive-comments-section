@@ -10,7 +10,10 @@ export const actions = {
   delete: "delete",
   clear: "clear",
   upDate: "upDate",
-  copy: "copy"
+  copy: "copy",
+  charge:"charge",
+  minLike:"minLike",
+  sumLike:"sumLike"
 }
 function reducer(listComents, action) {
   switch (action.type) {
@@ -30,19 +33,54 @@ function reducer(listComents, action) {
         }
         return comentObj;
       })
+      case actions.charge:
+        return action.payLoad.listComments
+      case actions.sumLike:
+        {
+          return listComents.map((comentObj) => {
+            if (comentObj.key === action.payLoad.id) {
+              comentObj.likes=action.payLoad.localLikes;
+              console.log("sumo")
+            }
+            return comentObj;
+          })
+        }
+        case actions.minLike:
+        {
+          return listComents.map((comentObj) => {
+            if (comentObj.key === action.payLoad.id) {
+              comentObj.likes=action.payLoad.localLikes;  
+              console.log("entro al likesmin")
+            }
+            return comentObj;
+          })
+        }
     default:
       return listComents;
   }
 }
 function createNewComment(newComment, photo, time, name) {
-  return { key: Date.now(), photo: photo, name: name, time: time, comment: newComment }
+  return { key: Date.now(), photo: photo, name: name, time: time, comment: newComment,ownTime:Date.now(),likes:0 }
 }
 function App() {////////////////////////////////////////7
   const [newComment, setNewComment] = useState("");
   const [listComents, dispatch] = useReducer(reducer, []);
   const [appTime, setAppTime] = useState(Date.now());
   const [mine,setMine]=useState(false);
-  const[currentUser,setCurrentUser]=useState("pepo")
+  const[currentUser,setCurrentUser]=useState("juliusomo")
+  useEffect(() => {
+    const data=localStorage.getItem("listComments");
+    if(data)
+    {
+      dispatch({type:actions.charge,payLoad:{listComments:JSON.parse(data)}})
+    }
+  }, [])
+  useEffect(() => {
+  localStorage.setItem("listComments",JSON.stringify(listComents))
+  }, [listComents])
+  
+
+  
   function handleInput(e) {
     setNewComment(e.currentTarget.value);
   }
@@ -59,7 +97,7 @@ function App() {////////////////////////////////////////7
         <div className="comments">
           {
             listComents.map((comentObj) => {
-              return <CommentBox key={comentObj.key} photo={comentObj.photo} name={comentObj.name} comment={comentObj.comment} mine={mine} setMine={setMine} dispatch={dispatch} id={comentObj.key} setAppTime={setAppTime}/>
+              return <CommentBox key={comentObj.key} photo={comentObj.photo} name={comentObj.name} comment={comentObj.comment} mine={mine} dispatch={dispatch} id={comentObj.key} setAppTime={setAppTime}ownTime={comentObj.ownTime}likes={comentObj.likes}/>
             })
           }
         </div>

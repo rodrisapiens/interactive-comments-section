@@ -16,11 +16,11 @@ function reducer(listSubComments, action) {
     switch (action.type) {
         case actions.addComment:
             {
-                return [...listSubComments,createNewComment(action.payLoad.newComment, action.payLoad.photo, action.payLoad.time, action.payLoad.name)]
+                return [...listSubComments, createNewComment(action.payLoad.newComment, action.payLoad.photo, action.payLoad.time, action.payLoad.name, action.payLoad.fatherId)]
             }
         case actions.delete:
             {
-                console.log("delete");
+
                 return listSubComments.filter((comment) => { return comment.key !== action.payLoad.id })
             }
         case actions.upDate:
@@ -30,32 +30,44 @@ function reducer(listSubComments, action) {
                 }
                 return comentObj;
             })
+        case actions.charge:
+            return action.payLoad.listComments
         default:
             return listSubComments;
     }
 }
-function createNewComment(newComment, photo, time, name) {
-    return { key: Date.now(), photo: photo, name: name, time: time, comment: newComment }
+function createNewComment(newComment, photo, time, name, fatherId) {
+    return { key: Date.now(), photo: photo, name: name, time: time, comment: newComment, fatherId: fatherId,ownTime:Date.now()}
 }
-function CommentBox({ id, name, comment, photo, mine, dispatch,setAppTime,setMine}) {///////////
-    const [likes, setLikes] = useState(0);
-    const [ownTime, setOwnTime] = useState(Date.now());
+function CommentBox({ id, name, comment, photo, mine, dispatch, setAppTime,ownTime,likes }) {///////////
     const [timeAgo, setTimeAgo] = useState(0);
     const { appTime } = useContext(AppTimeContext)
-    const {currentUser}=useContext(CurrentUserContext);
+    const { currentUser } = useContext(CurrentUserContext);
     const [showDeleteBox, setShowDeleteBox] = useState(false);
     const [edit, setEdit] = useState(false);
     const [upDatedComment, setUpDatedComment] = useState(comment);
     const [listSubComents, subDispatch] = useReducer(reducer, []);
-    const [newComment,setNewComment]=useState("");
-    const[reply,setReply]=useState(false);
-
+    const [newComment, setNewComment] = useState("");
+    const [reply, setReply] = useState(false);
+    const[localLikes,setLocalLikes]=useState(likes)
     useEffect(() => {
-        setOwnTime(Date.now())
+        const data = localStorage.getItem(`listSubComents${id}`);
+        if (data) {
+            subDispatch({ type: actions.charge, payLoad: { listComments: JSON.parse(data) } })
+
+        }
     }, [])
+    useEffect(() => {
+        console.log("likes",likes)
+    }, [likes])
+    
+    useEffect(() => {
+        localStorage.setItem(`listSubComents${id}`, JSON.stringify(listSubComents))
+    }, [listSubComents])
+
+  
     function ShowTimeAgo() {
         let seconds = Math.round(timeAgo / 1000);
-        console.log("time passed:", seconds)
         let response;
         if (seconds < 1) {
             response = "now";
@@ -85,7 +97,6 @@ function CommentBox({ id, name, comment, photo, mine, dispatch,setAppTime,setMin
     }
     useEffect(() => {
         setTimeAgo(appTime - ownTime)
-        console.log("soy", comment, "se ejecuta effect cuando time cambbia")
     }, [appTime])
 
     function handleShow() {
@@ -112,17 +123,16 @@ function CommentBox({ id, name, comment, photo, mine, dispatch,setAppTime,setMin
         console.log(e.currentTarget.value);
         setUpDatedComment(e.currentTarget.value)
     }
-    function handleInput(e)
-    {
+    function handleInput(e) {
 
         setNewComment(e.currentTarget.value);
     }
     function handleSendComent() {
         setReply(false);
         setAppTime(Date.now());
-        subDispatch({ type: actions.addComment, payLoad: { newComment: newComment, time: Date.now(), photo: userImage, name: "juliusomo" } })
+        subDispatch({ type: actions.addComment, payLoad: { newComment: newComment, time: Date.now(), photo: userImage, name: "juliusomo", fatherId: id } })
         setNewComment("")
-      }
+    }
     return (
         <>
             <div className='CommentBox'>
@@ -136,9 +146,9 @@ function CommentBox({ id, name, comment, photo, mine, dispatch,setAppTime,setMin
                 {edit && <textarea className="comment" value={upDatedComment} onChange={(e) => { handleUpDateComment(e); }}></textarea>}
                 <div className="thirdColumn">
                     <div className="buttonsAndLikes">
-                        <button className="plus" onClick={() => { setLikes(likes + 1) }}><IconPlus /></button>
-                        <span className="numerLikes">{likes}</span>
-                        <button className="minus" onClick={() => { setLikes(likes - 1) }}><IconMinus /></button>
+                        <button className="plus" onClick={() => {setLocalLikes(localLikes+1);dispatch({type:actions.sumLike,payLoad:{id:id,localLikes:localLikes+1}})}}><IconPlus /></button>
+                        <span className="numerLikes">{localLikes}</span>
+                        <button className="minus" onClick={() => { setLocalLikes(localLikes-1);dispatch({type:actions.minLike,payLoad:{id:id,localLikes:localLikes-1}}) }}><IconMinus /></button>
                     </div>
                     <div className="footSection">
                         {
@@ -150,23 +160,29 @@ function CommentBox({ id, name, comment, photo, mine, dispatch,setAppTime,setMin
                 </div>
             </div>
             <div className='subComents'>
-            {reply&&
-                <div className="inputBoxB">
-                <textarea type="text" required placeholder='Add a comment...' className='commentInputB' onChange={handleInput} value={newComment}></textarea>
-                <div className="secondRaw">
-                    <img src={userImage} alt="" className="user" />
-                    <button className="send" onClick={handleSendComent}>SEND</button>
-                </div>
-            </div>
-            }
-            
+                {reply &&
+                    <div className="inputBoxB">
+                        <textarea type="text" required placeholder='Add a comment...' className='commentInputB' onChange={handleInput} value={newComment}></textarea>
+                        <div className="secondRaw">
+                            <img src={userImage} alt="" className="user" />
+                            <button className="send" onClick={handleSendComent}>SEND</button>
+                        </div>
+                    </div>
+                }
+
                 {
                     listSubComents.map((comentObj) => {
-                        return <SubCommentBox key={comentObj.key} photo={comentObj.photo} name={comentObj.name} comment={comentObj.comment} mine={mine} subDispatch={subDispatch} id={comentObj.key}setAppTime={setAppTime} />
+                        if(comentObj.fatherId === id)
+                        {
+                            return <SubCommentBox key={comentObj.key} photo={comentObj.photo} name={comentObj.name} comment={comentObj.comment} mine={mine} subDispatch={subDispatch} id={comentObj.key} setAppTime={setAppTime} ownTime={comentObj.ownTime}fatherId={id}/>
+                        }
+                            
+                        else return null
                     })
+
                 }
             </div>
-            {showDeleteBox && <DeleteBox setShowDeleteBoxOff={setShowDeleteBox} id={id} dispatch={dispatch} father={true}/>}
+            {showDeleteBox && <DeleteBox setShowDeleteBoxOff={setShowDeleteBox} id={id} dispatch={dispatch} father={true} />}
         </>
     )
 }

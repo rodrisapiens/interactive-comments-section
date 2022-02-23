@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext} from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { ReactComponent as IconPlus } from "../images/icon-plus.svg";
 import { ReactComponent as IconMinus } from "../images/icon-minus.svg";
 import { ReactComponent as IconReply } from "../images/icon-reply.svg";
@@ -9,92 +9,86 @@ import DeleteBox from './DeleteBox';
 import { AppTimeContext, CurrentUserContext } from '../Context';
 import "../styles/commentBox.css";
 import { actions } from '../App';
-function SubCommentBox({photo, name, comment, mine,subDispatch, id,setAppTime}) {//////////////
-  const [likes, setLikes] = useState(0);
-    const [ownTime, setOwnTime] = useState(Date.now());
+function SubCommentBox({ photo, name, comment, mine, subDispatch, id, setAppTime, ownTime,fatherId}) {//////////////
+    const [likes, setLikes] = useState(0);
     const [timeAgo, setTimeAgo] = useState(0);
     const { appTime } = useContext(AppTimeContext)
     const { currentUser } = useContext(CurrentUserContext)
     const [showDeleteBox, setShowDeleteBox] = useState(false);
     const [edit, setEdit] = useState(false);
     const [upDatedComment, setUpDatedComment] = useState(comment);
-    const [newComment,setNewComment]=useState("");
-    const[reply,setReply]=useState(false);
+    const [newComment, setNewComment] = useState("");
+    const [reply, setReply] = useState(false);
+    
+    function ShowTimeAgo() {
+        let seconds = Math.round(timeAgo / 1000);
+        let response;
+        if (seconds < 1) {
+            response = "now";
+        }
+        if (seconds > 1) {
+            response = seconds + " seconds ago"
+        }
+        if (seconds > 60) {
+            if (Math.round(seconds / 60) > 1) {
+                response = Math.round(seconds / 60) + " minutes ago"
+            }
+            else {
+
+                response = Math.round(seconds / 60) + " minute ago"
+
+            }
+        }
+        if (seconds > 3600) {
+            if (Math.round(seconds / 3600) > 1) {
+                response = Math.round(seconds / 3600) + " hours ago"
+            }
+            else {
+                response = Math.round(seconds / 3600) + " hour ago"
+            }
+        }
+        return (response);
+    }
     useEffect(() => {
-      setOwnTime(Date.now())
-  }, [])
-  function ShowTimeAgo() {
-      let seconds = Math.round(timeAgo / 1000);
-      console.log("time passed:", seconds)
-      let response;
-      if (seconds < 1) {
-          response = "now";
-      }
-      if (seconds > 1) {
-          response = seconds + " seconds ago"
-      }
-      if (seconds > 60) {
-          if (Math.round(seconds / 60) > 1) {
-              response = Math.round(seconds / 60) + " minutes ago"
-          }
-          else {
+        setTimeAgo(appTime - ownTime)
 
-              response = Math.round(seconds / 60) + " minute ago"
+    }, [appTime])
 
-          }
-      }
-      if (seconds > 3600) {
-          if (Math.round(seconds / 3600) > 1) {
-              response = Math.round(seconds / 3600) + " hours ago"
-          }
-          else {
-              response = Math.round(seconds / 3600) + " hour ago"
-          }
-      }
-      return (response);
-  }
-  useEffect(() => {
-      setTimeAgo(appTime - ownTime)
-      console.log("soy", comment, "se ejecuta effect cuando time cambbia")
-  }, [appTime])
+    function handleShow() {
+        if (mine) {
+            return <div className='myFoot'>
+                <IconDelete onClick={() => { setShowDeleteBox(true) }} />
+                <button className="delete" onClick={() => { setShowDeleteBox(true) }}>Delete</button>
+                <IconEdit onClick={() => { setEdit(!edit); subDispatch({ type: actions.upDate, payLoad: { id: id, upDatedComment: upDatedComment } }) }} />
+                <button className="edit" onClick={() => { setEdit(!edit); subDispatch({ type: actions.upDate, payLoad: { id: id, upDatedComment: upDatedComment } }) }}>{edit ? "Done" : "Edit"}</button>
+            </div>
+        }
+        else {
+            return <div className='elseFoot'>
+                <IconReply onClick={HandleReply} />
+                <button className="reply" onClick={HandleReply}>Reply</button>
+            </div>
+        }
+    }
+    function handleSendComent() {
+        setReply(false);
+        setAppTime(Date.now());
+        subDispatch({ type: actions.addComment, payLoad: { newComment: newComment, time: Date.now(), photo: userImage, name: "juliusomo", fatherId: fatherId } })
+        setNewComment("")
+    }
+    function HandleReply() {
+        setReply(true);
+        setNewComment(`@${name} `);
+    }
+    function handleUpDateComment(e) {
 
-  function handleShow() {
-      if (mine) {
-          return <div className='myFoot'>
-              <IconDelete onClick={() => { setShowDeleteBox(true) }} />
-              <button className="delete" onClick={() => { setShowDeleteBox(true) }}>Delete</button>
-              <IconEdit onClick={() => { setEdit(!edit); subDispatch({ type: actions.upDate, payLoad: { id: id, upDatedComment: upDatedComment } }) }} />
-              <button className="edit" onClick={() => { setEdit(!edit); subDispatch({ type: actions.upDate, payLoad: { id: id, upDatedComment: upDatedComment } }) }}>{edit ? "Done" : "Edit"}</button>
-          </div>
-      }
-      else {
-          return <div className='elseFoot'>
-              <IconReply onClick={HandleReply} />
-              <button className="reply" onClick={HandleReply}>Reply</button>
-          </div>
-      }
-  }
-  function handleSendComent() {
-    setReply(false);
-    setAppTime(Date.now());
-    subDispatch({ type: actions.addComment, payLoad: { newComment: newComment, time: Date.now(), photo: userImage, name: "juliusomo" } })
-    setNewComment("")
-  }
-  function HandleReply()
-  {
-    setReply(true);
-    setNewComment(`@${name} `);
-  }
-  function handleUpDateComment(e) {
-    console.log(e.currentTarget.value);
-    setUpDatedComment(e.currentTarget.value)
-}
-function handleInput(e)
-{
-    setNewComment(e.currentTarget.value);
-}
-  return (
-    <>
+        setUpDatedComment(e.currentTarget.value)
+    }
+    function handleInput(e) {
+        setNewComment(e.currentTarget.value);
+    }
+    return (
+        <>
             <div className='subCommentBox'>
                 <div className="firstColumn">
                     <img src={photo} alt="" className="thumnail" />
@@ -119,18 +113,18 @@ function handleInput(e)
 
                 </div>
             </div>
-            {reply&&
+            {reply &&
                 <div className="inputBoxB">
-                <textarea type="text" required placeholder='Add a comment...' className='commentInputB' onChange={handleInput} value={newComment}></textarea>
-                <div className="secondRaw">
-                    <img src={userImage} alt="" className="user" />
-                    <button className="send" onClick={handleSendComent}>SEND</button>
+                    <textarea type="text" required placeholder='Add a comment...' className='commentInputB' onChange={handleInput} value={newComment}></textarea>
+                    <div className="secondRaw">
+                        <img src={userImage} alt="" className="user" />
+                        <button className="send" onClick={handleSendComent}>SEND</button>
+                    </div>
                 </div>
-            </div>
             }
             {showDeleteBox && <DeleteBox setShowDeleteBoxOff={setShowDeleteBox} id={id} subDispatch={subDispatch} father={false} />}
         </>
-  )
+    )
 }
 
 export default SubCommentBox
