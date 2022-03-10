@@ -5,9 +5,9 @@
     padding: 1rem;
 }
 .firstColumn {
-    display: grid;
-    grid-template-columns: 15% 29% 1fr 1fr;
-    align-items: center;
+    display: flex;
+justify-content: space-between;
+align-items: center;
 }
 .thumnail {
     width: 2rem;

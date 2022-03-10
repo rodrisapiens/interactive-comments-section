@@ -93,6 +93,14 @@ function CommentBox({ id, name, comment, photo, mine, dispatch, setAppTime,ownTi
                 response = Math.round(seconds / 3600) + " hour ago"
             }
         }
+        if (seconds > 86400) {
+            if (Math.round(seconds / 86400) > 1) {
+                response = Math.round(seconds / 86400) + " days ago"
+            }
+            else {
+                response = Math.round(seconds / 86400) + " day ago"
+            }
+        }
         return (response);
     }
     useEffect(() => {
@@ -130,7 +138,7 @@ function CommentBox({ id, name, comment, photo, mine, dispatch, setAppTime,ownTi
     function handleSendComent() {
         setReply(false);
         setAppTime(Date.now());
-        subDispatch({ type: actions.addComment, payLoad: { newComment: newComment, time: Date.now(), photo: userImage, name: "juliusomo", fatherId: id } })
+        subDispatch({ type: actions.addComment, payLoad: { newComment: newComment, time: Date.now(), photo: userImage, name: currentUser, fatherId: id } })
         setNewComment("")
     }
     return (
@@ -138,7 +146,7 @@ function CommentBox({ id, name, comment, photo, mine, dispatch, setAppTime,ownTi
             <div className='CommentBox'>
                 <div className="firstColumn">
                     <img src={photo} alt="" className="thumnail" />
-                    <p className="name">{currentUser}</p>
+                    <p className="name">{name}</p>
                     {mine && <p className="you">you</p>}
                     <p className="time">{ShowTimeAgo()}</p>
                 </div>
@@ -174,7 +182,7 @@ function CommentBox({ id, name, comment, photo, mine, dispatch, setAppTime,ownTi
                     listSubComents.map((comentObj) => {
                         if(comentObj.fatherId === id)
                         {
-                            return <SubCommentBox key={comentObj.key} photo={comentObj.photo} name={comentObj.name} comment={comentObj.comment} mine={mine} subDispatch={subDispatch} id={comentObj.key} setAppTime={setAppTime} ownTime={comentObj.ownTime}fatherId={id}/>
+                            return <SubCommentBox key={comentObj.key} photo={comentObj.photo} name={comentObj.name} comment={comentObj.comment} mine={comentObj.name===currentUser?true:false} subDispatch={subDispatch} id={comentObj.key} setAppTime={setAppTime} ownTime={comentObj.ownTime}fatherId={id}/>
                         }
                             
                         else return null

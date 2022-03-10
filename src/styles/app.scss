@@ -9,14 +9,17 @@ body {
     display: grid;
     justify-content: center;
     align-items: baseline;
-    width: 100vw;
+    width: fit fit-content;
     height: 100vh;
-    padding: 2rem;
     background-color: #f5f6fa;
 }
 .app {
     display: grid;
     gap: 1em;
+    position: absolute;
+left: 50%;
+transform: translateX(-50%);
+
 }
 .inputBox {
     display: grid;
@@ -64,4 +67,20 @@ body {
 .comments {
     display: grid;
     gap: .5em;
+}
+.currentInput
+{
+    position: absolute;
+    top:50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    background-color: black;
+    color: white;
+    border-style: none;
+    outline: none;
+    width: 16em;
+    height: 6em;
+    border-radius: 5px;
+    padding: 1em;
+
 }

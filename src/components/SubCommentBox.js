@@ -47,6 +47,14 @@ function SubCommentBox({ photo, name, comment, mine, subDispatch, id, setAppTime
                 response = Math.round(seconds / 3600) + " hour ago"
             }
         }
+        if (seconds > 86400) {
+            if (Math.round(seconds / 86400) > 1) {
+                response = Math.round(seconds / 86400) + " days ago"
+            }
+            else {
+                response = Math.round(seconds / 86400) + " day ago"
+            }
+        }
         return (response);
     }
     useEffect(() => {
@@ -73,7 +81,7 @@ function SubCommentBox({ photo, name, comment, mine, subDispatch, id, setAppTime
     function handleSendComent() {
         setReply(false);
         setAppTime(Date.now());
-        subDispatch({ type: actions.addComment, payLoad: { newComment: newComment, time: Date.now(), photo: userImage, name: "juliusomo", fatherId: fatherId } })
+        subDispatch({ type: actions.addComment, payLoad: { newComment: newComment, time: Date.now(), photo: userImage, name: currentUser, fatherId: fatherId } })
         setNewComment("")
     }
     function HandleReply() {
@@ -92,7 +100,7 @@ function SubCommentBox({ photo, name, comment, mine, subDispatch, id, setAppTime
             <div className='subCommentBox'>
                 <div className="firstColumn">
                     <img src={photo} alt="" className="thumnail" />
-                    <p className="name">{currentUser}</p>
+                    <p className="name">{name}</p>
                     {mine && <p className="you">you</p>}
                     <p className="time">{ShowTimeAgo()}</p>
                 </div>

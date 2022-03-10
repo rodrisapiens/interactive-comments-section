@@ -16,9 +16,10 @@ body {
   -webkit-box-align: baseline;
       -ms-flex-align: baseline;
           align-items: baseline;
-  width: 100vw;
+  width: fit -webkit-fit-content;
+  width: fit -moz-fit-content;
+  width: fit fit-content;
   height: 100vh;
-  padding: 2rem;
   background-color: #f5f6fa;
 }
 
@@ -26,6 +27,10 @@ body {
   display: -ms-grid;
   display: grid;
   gap: 1em;
+  position: absolute;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+          transform: translateX(-50%);
 }
 
 .inputBox {
@@ -90,5 +95,21 @@ body {
   display: -ms-grid;
   display: grid;
   gap: .5em;
+}
+
+.currentInput {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translateX(-50%) translateY(-50%);
+          transform: translateX(-50%) translateY(-50%);
+  background-color: black;
+  color: white;
+  border-style: none;
+  outline: none;
+  width: 16em;
+  height: 6em;
+  border-radius: 5px;
+  padding: 1em;
 }
 /*# sourceMappingURL=app.css.map */

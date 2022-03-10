@@ -4,6 +4,7 @@ import userImage from "./images/avatars/image-juliusomo.png";
 import CommentBox from "./components/CommentBox.js";
 import { AppTimeContext } from './Context';
 import { CurrentUserContext } from './Context';
+import Who from './components/Who';
 export const actions = {
   addComment: "addComment",
   toggle: "toggle",
@@ -67,7 +68,7 @@ function App() {////////////////////////////////////////7
   const [listComents, dispatch] = useReducer(reducer, []);
   const [appTime, setAppTime] = useState(Date.now());
   const [mine,setMine]=useState(false);
-  const[currentUser,setCurrentUser]=useState("juliusomo")
+  const[currentUser,setCurrentUser]=useState("")
   useEffect(() => {
     const data=localStorage.getItem("listComments");
     if(data)
@@ -93,11 +94,12 @@ function App() {////////////////////////////////////////7
   return (
     <AppTimeContext.Provider value={{ appTime, setAppTime }}>
       <CurrentUserContext.Provider value={{currentUser,setCurrentUser}}>
+      {currentUser===""?<Who/>:
       <div className="app">
         <div className="comments">
           {
             listComents.map((comentObj) => {
-              return <CommentBox key={comentObj.key} photo={comentObj.photo} name={comentObj.name} comment={comentObj.comment} mine={mine} dispatch={dispatch} id={comentObj.key} setAppTime={setAppTime}ownTime={comentObj.ownTime}likes={comentObj.likes}/>
+              return <CommentBox key={comentObj.key} photo={comentObj.photo} name={comentObj.name} comment={comentObj.comment} mine={comentObj.name===currentUser?true:false} dispatch={dispatch} id={comentObj.key} setAppTime={setAppTime}ownTime={comentObj.ownTime}likes={comentObj.likes}/>
             })
           }
         </div>
@@ -110,6 +112,7 @@ function App() {////////////////////////////////////////7
         </div>
         <button className="reply"onClick={()=>{setMine(!mine)}}>MINE</button>
       </div>
+      }
       </CurrentUserContext.Provider>
     </AppTimeContext.Provider>
   );
