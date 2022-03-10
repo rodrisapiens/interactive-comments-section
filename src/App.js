@@ -67,7 +67,6 @@ function App() {////////////////////////////////////////7
   const [newComment, setNewComment] = useState("");
   const [listComents, dispatch] = useReducer(reducer, []);
   const [appTime, setAppTime] = useState(Date.now());
-  const [mine,setMine]=useState(false);
   const[currentUser,setCurrentUser]=useState("")
   useEffect(() => {
     const data=localStorage.getItem("listComments");
@@ -110,8 +109,8 @@ function App() {////////////////////////////////////////7
             <button className="send" onClick={handleSendComent}>SEND</button>
           </div>
         </div>
-        <button className="reply"onClick={()=>{setMine(!mine)}}>MINE</button>
-      </div>
+{/*         <button className="reply"onClick={()=>{setMine(!mine)}}>MINE</button>
+ */}      </div>
       }
       </CurrentUserContext.Provider>
     </AppTimeContext.Provider>
