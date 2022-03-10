@@ -108,4 +108,12 @@ body {
   border-radius: 5px;
   padding: 1em;
 }
+
+.who {
+  text-align: center;
+}
+
+.login {
+  margin-top: 6em;
+}
 /*# sourceMappingURL=app.css.map */
