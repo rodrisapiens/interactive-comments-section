@@ -103,19 +103,17 @@ function App() {////////////////////////////////////////
   const [messages] = useCollectionData(messagesRef, { idField: 'id' });
   useEffect(()=>
   {
-    getDocs(messagesCol).then((snapshot)=>{
-console.log(snapshot.docs[0].data().listComments,"snapshot.docs");
-dispatch({ type: actions.charge, payLoad: { listComments: JSON.parse(snapshot.docs[0].data().listComments) } })
-    })
- 
-  },[])
-  /* useEffect(() => {
-    console.log(messages);
     if(messages)
     {
-      dispatch({ type: actions.charge, payLoad: { listComments: JSON.parse(messages[1].listComments) } })
+      //messages[0].listComments
+      dispatch({ type: actions.charge, payLoad: { listComments: JSON.parse(messages[0].listComments) } })
+
     }
-  }, [messages]) */
+   /*  getDocs(messagesCol).then((snapshot)=>{
+dispatch({ type: actions.charge, payLoad: { listComments: JSON.parse(snapshot.docs[0].data().listComments) } })
+    }) */
+ 
+  },[messages])
   useEffect(() => {
     if(listComents.length!==0)
     {    
@@ -162,7 +160,9 @@ function sendMessage()
                 listComents.map((comentObj) => {//sumo uid a mine
                   return <CommentBox key={comentObj.key} photo={comentObj.photo} name={comentObj.name} comment={comentObj.comment} mine={comentObj.uid === auth.currentUser.uid ? true : false} dispatch={dispatch} id={comentObj.key} setAppTime={setAppTime} ownTime={comentObj.ownTime} likes={comentObj.likes} />
                 })
+                
               }
+              <div ref={dummy.current}></div>
             </div>
             <div className="inputBox">
               <textarea type="text" required placeholder='Add a comment...' className='comentInput' onChange={handleInput} value={newComment}></textarea>
