@@ -16,8 +16,7 @@ body {
 .app {
     display: grid;
     gap: 1em;
-   
-
+     padding: 1rem;
 }
 .inputBox {
     display: grid;
@@ -47,6 +46,7 @@ body {
 .user {
     width: 2em;
     height: 2em;
+    border-radius: 50%;
 }
 .send {
     background-color: #595dbe;
@@ -82,11 +82,52 @@ body {
     padding: 1em;
 
 }
-.who
+.logIn
 {
-    text-align: center;
+    display: flex;
+    background-color: transparent;
+    border: solid;
+    border-color: black;
+    padding: 1rem;
+    gap: 1rem;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    border-radius: 5px;
+    font-family: inherit;
+    border-width: thin;
+    font-weight:normal;
+    font-size: 1rem;
+
+}
+.google
+{
+    width: 2rem;
 }
 .login
 {
     margin-top: 6em;
+}
+.logOut
+{
+    background-color: transparent;
+    border: solid;
+    border-color: black;
+    padding: 1rem;
+    position: relative;
+    border-radius: 5px;
+    font-family: inherit;
+    border-width: thin;
+    font-weight:normal;
+    font-size: 1rem;
+}
+.header
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
 }

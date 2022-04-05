@@ -4,11 +4,11 @@ import { ReactComponent as IconMinus } from "../images/icon-minus.svg";
 import { ReactComponent as IconReply } from "../images/icon-reply.svg";
 import { ReactComponent as IconDelete } from "../images/icon-delete.svg";
 import { ReactComponent as IconEdit } from "../images/icon-edit.svg";
-import userImage from "../images/avatars/image-juliusomo.png";
 import DeleteBox from './DeleteBox';
 import { AppTimeContext, CurrentUserContext } from '../Context';
 import "../styles/commentBox.css";
 import { actions } from '../App';
+import {auth} from '../App';
 function SubCommentBox({ photo, name, comment, mine, subDispatch, id, setAppTime, ownTime,fatherId}) {//////////////
     const [likes, setLikes] = useState(0);
     const [timeAgo, setTimeAgo] = useState(0);
@@ -81,7 +81,7 @@ function SubCommentBox({ photo, name, comment, mine, subDispatch, id, setAppTime
     function handleSendComent() {
         setReply(false);
         setAppTime(Date.now());
-        subDispatch({ type: actions.addComment, payLoad: { newComment: newComment, time: Date.now(), photo: userImage, name: currentUser, fatherId: fatherId } })
+        subDispatch({ type: actions.addComment, payLoad: { newComment: newComment, time: Date.now(), photo: auth.currentUser.photoURL, name: auth.currentUser.displayName, fatherId: fatherId,uid:auth.currentUser.uid} })
         setNewComment("")
     }
     function HandleReply() {
@@ -125,7 +125,7 @@ function SubCommentBox({ photo, name, comment, mine, subDispatch, id, setAppTime
                 <div className="inputBoxB">
                     <textarea type="text" required placeholder='Add a comment...' className='commentInputB' onChange={handleInput} value={newComment}></textarea>
                     <div className="secondRaw">
-                        <img src={userImage} alt="" className="user" />
+                        <img src={auth.currentUser.photoURL} alt="" className="user" />
                         <button className="send" onClick={handleSendComent}>SEND</button>
                     </div>
                 </div>

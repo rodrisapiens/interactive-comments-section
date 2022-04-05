@@ -27,6 +27,7 @@ body {
   display: -ms-grid;
   display: grid;
   gap: 1em;
+  padding: 1rem;
 }
 
 .inputBox {
@@ -68,6 +69,7 @@ body {
 .user {
   width: 2em;
   height: 2em;
+  border-radius: 50%;
 }
 
 .send {
@@ -109,11 +111,64 @@ body {
   padding: 1em;
 }
 
-.who {
-  text-align: center;
+.logIn {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  background-color: transparent;
+  border: solid;
+  border-color: black;
+  padding: 1rem;
+  gap: 1rem;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+  border-radius: 5px;
+  font-family: inherit;
+  border-width: thin;
+  font-weight: normal;
+  font-size: 1rem;
+}
+
+.google {
+  width: 2rem;
 }
 
 .login {
   margin-top: 6em;
+}
+
+.logOut {
+  background-color: transparent;
+  border: solid;
+  border-color: black;
+  padding: 1rem;
+  position: relative;
+  border-radius: 5px;
+  font-family: inherit;
+  border-width: thin;
+  font-weight: normal;
+  font-size: 1rem;
+}
+
+.header {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  gap: 1rem;
 }
 /*# sourceMappingURL=app.css.map */

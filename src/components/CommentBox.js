@@ -4,19 +4,17 @@ import { ReactComponent as IconMinus } from "../images/icon-minus.svg";
 import { ReactComponent as IconReply } from "../images/icon-reply.svg";
 import { ReactComponent as IconDelete } from "../images/icon-delete.svg";
 import { ReactComponent as IconEdit } from "../images/icon-edit.svg";
-import userImage from "../images/avatars/image-juliusomo.png";
-
 import { AppTimeContext } from '../Context';
 import { CurrentUserContext } from '../Context';
 import "../styles/commentBox.css";
 import DeleteBox from './DeleteBox';
-import { actions } from '../App';
+import { actions, auth } from '../App';
 import SubCommentBox from './SubCommentBox';
 function reducer(listSubComments, action) {
     switch (action.type) {
         case actions.addComment:
             {
-                return [...listSubComments, createNewComment(action.payLoad.newComment, action.payLoad.photo, action.payLoad.time, action.payLoad.name, action.payLoad.fatherId)]
+                return [...listSubComments, createNewComment(action.payLoad.newComment, action.payLoad.photo, action.payLoad.time, action.payLoad.name, action.payLoad.fatherId,action.payLoad.uid)]
             }
         case actions.delete:
             {
@@ -36,8 +34,8 @@ function reducer(listSubComments, action) {
             return listSubComments;
     }
 }
-function createNewComment(newComment, photo, time, name, fatherId) {
-    return { key: Date.now(), photo: photo, name: name, time: time, comment: newComment, fatherId: fatherId,ownTime:Date.now()}
+function createNewComment(newComment, photo, time, name, fatherId,uid) {
+    return { key: Date.now(), photo: photo, name: name, time: time, comment: newComment, fatherId: fatherId,ownTime:Date.now(),uid:uid}
 }
 function CommentBox({ id, name, comment, photo, mine, dispatch, setAppTime,ownTime,likes }) {///////////
     const [timeAgo, setTimeAgo] = useState(0);
@@ -138,7 +136,7 @@ function CommentBox({ id, name, comment, photo, mine, dispatch, setAppTime,ownTi
     function handleSendComent() {
         setReply(false);
         setAppTime(Date.now());
-        subDispatch({ type: actions.addComment, payLoad: { newComment: newComment, time: Date.now(), photo: userImage, name: currentUser, fatherId: id } })
+        subDispatch({ type: actions.addComment, payLoad: { newComment: newComment, time: Date.now(), photo: auth.currentUser.photoURL,name:auth.currentUser.displayName, fatherId: id,uid:auth.currentUser.uid } })
         setNewComment("")
     }
     return (
@@ -172,7 +170,7 @@ function CommentBox({ id, name, comment, photo, mine, dispatch, setAppTime,ownTi
                     <div className="inputBoxB">
                         <textarea type="text" required placeholder='Add a comment...' className='commentInputB' onChange={handleInput} value={newComment}></textarea>
                         <div className="secondRaw">
-                            <img src={userImage} alt="" className="user" />
+                            <img src={auth.currentUser.photoURL} alt="" className="user" />
                             <button className="send" onClick={handleSendComent}>SEND</button>
                         </div>
                     </div>
@@ -182,7 +180,7 @@ function CommentBox({ id, name, comment, photo, mine, dispatch, setAppTime,ownTi
                     listSubComents.map((comentObj) => {
                         if(comentObj.fatherId === id)
                         {
-                            return <SubCommentBox key={comentObj.key} photo={comentObj.photo} name={comentObj.name} comment={comentObj.comment} mine={comentObj.name===currentUser?true:false} subDispatch={subDispatch} id={comentObj.key} setAppTime={setAppTime} ownTime={comentObj.ownTime}fatherId={id}/>
+                            return <SubCommentBox key={comentObj.key} photo={comentObj.photo} name={comentObj.name} comment={comentObj.comment} mine={comentObj.uid===auth.currentUser.uid?true:false} subDispatch={subDispatch} id={comentObj.key} setAppTime={setAppTime} ownTime={comentObj.ownTime}fatherId={id}/>
                         }
                             
                         else return null
