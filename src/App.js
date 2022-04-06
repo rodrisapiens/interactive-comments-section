@@ -11,6 +11,8 @@ import {
   getFirestore,
   collection,
   getDocs,
+  addDoc,
+  setDoc,
   doc,
   updateDoc
 }from 'firebase/firestore'
@@ -40,13 +42,13 @@ export const actions = {
   minLike: "minLike",
   sumLike: "sumLike"
 }
-const db= getFirestore();
+export const db= getFirestore();
 export const auth = firebase.auth();
 function reducer(listComents, action) {
   switch (action.type) {
     case actions.addComment:
       {
-        return [...listComents, createNewComment(action.payLoad.newComment, action.payLoad.photo, action.payLoad.time, action.payLoad.name, action.payLoad.uid)]
+        return [...listComents, createNewComment(action.payLoad.newComment, action.payLoad.photo, action.payLoad.time, action.payLoad.name, action.payLoad.uid,Date.now())]
       }     
     case actions.delete:
       {
@@ -86,38 +88,54 @@ function reducer(listComents, action) {
       return listComents;
   }
 }
-function createNewComment(newComment, photo, time, name, uid) {
-  return { key: Date.now(), photo: photo, name: name, time: time, comment: newComment, ownTime: Date.now(), likes: 0, uid: uid }
+function createNewComment(newComment, photo, time, name, uid,key) {
+  addSubcomments(key);
+  return { key: key, photo: photo, name: name, time: time, comment: newComment, ownTime: Date.now(), likes: 0, uid: uid }
 }
+function addSubcomments(id)
+  {
+    /* addDoc(messagesCol,{
+      listSubComments:""
+  }); */
+  setDoc(doc(db,"messages",`${id}`),
+{
+  listSubComments:""
+});
+  }
 function App() {////////////////////////////////////////
   const dummy = useRef();
   const messagesCol=collection(db,'messages');
   const docRef=doc(db,'messages','oSUw9RAfj1P3FmUrlmkN');
   const listCommentsRef=firestore.collection('messages').doc('listComments');
-  const messagesRef = firestore.collection('messages');
+ const messagesRef = firestore.collection('messages');
   const [user] = useAuthState(auth)
   const [newComment, setNewComment] = useState("");
   const [listComents, dispatch] = useReducer(reducer, []);
   const [appTime, setAppTime] = useState(Date.now());
   const [currentUser, setCurrentUser] = useState("")
   const [messages] = useCollectionData(messagesRef, { idField: 'id' });
+  const listCommentsId="oSUw9RAfj1P3FmUrlmkN";
   useEffect(()=>
   {
-    if(messages)
+    /* if(messages)
     {
-      //messages[0].listComments
-      dispatch({ type: actions.charge, payLoad: { listComments: JSON.parse(messages[0].listComments) } })
+      dispatch({ type: actions.charge, payLoad: { listComments: JSON.parse(messages.id("oSUw9RAfj1P3FmUrlmkN").listComments) } })
 
-    }
-   /*  getDocs(messagesCol).then((snapshot)=>{
-dispatch({ type: actions.charge, payLoad: { listComments: JSON.parse(snapshot.docs[0].data().listComments) } })
-    }) */
- 
-  },[messages])
+    } */
+     getDocs(messagesCol).then((snapshot)=>{
+       let info=[];
+       snapshot.docs.forEach((element)=>{
+         info.push({...element.data(),id:element.id});
+       })
+       const myList=info.filter((info)=>{
+            return info.id===listCommentsId;
+       }) 
+  dispatch({ type: actions.charge, payLoad: { listComments: JSON.parse(myList[0].listComments) } })
+    }) 
+  },[])
   useEffect(() => {
     if(listComents.length!==0)
     {    
-      console.log(listComents,"lisco")
       sendMessage();
     }
   }, [listComents])
@@ -128,23 +146,17 @@ dispatch({ type: actions.charge, payLoad: { listComments: JSON.parse(snapshot.do
     setAppTime(Date.now());
     dispatch({ type: actions.addComment, payLoad: { newComment: newComment, time: Date.now(), photo: auth.currentUser.photoURL, name: auth.currentUser.displayName, uid: auth.currentUser.uid } })
     setNewComment("")
-    //sendMessage();
+    //addSubcomments();//cuando meto esto se laguea, por que?creo que debe ser que esta leyendo y escribiedo
   }
   function log(logi)
   {
     console.log(logi);
   }
-  /* const sendMessage = async() => {
-     await listCommentsRef.set({
-        listComments:JSON.stringify(listComents)
-    }); 
-} */
 function sendMessage()
 {
-  //console.log(listComents,"listC")
   updateDoc(docRef,{
     listComments:JSON.stringify(listComents)
-  });
+  })
 
 }// el problema es que send message se ejecuta antes de poder actualizar el mensaje
   return (

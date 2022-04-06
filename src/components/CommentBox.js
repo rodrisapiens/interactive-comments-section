@@ -8,13 +8,22 @@ import { AppTimeContext } from '../Context';
 import { CurrentUserContext } from '../Context';
 import "../styles/commentBox.css";
 import DeleteBox from './DeleteBox';
-import { actions, auth } from '../App';
+import { actions, auth, db } from '../App';
 import SubCommentBox from './SubCommentBox';
+import {
+    getFirestore,
+    collection,
+    getDocs,
+    addDoc,
+    setDoc,
+    doc,
+    updateDoc
+} from 'firebase/firestore'
 function reducer(listSubComments, action) {
     switch (action.type) {
         case actions.addComment:
             {
-                return [...listSubComments, createNewComment(action.payLoad.newComment, action.payLoad.photo, action.payLoad.time, action.payLoad.name, action.payLoad.fatherId,action.payLoad.uid)]
+                return [...listSubComments, createNewComment(action.payLoad.newComment, action.payLoad.photo, action.payLoad.time, action.payLoad.name, action.payLoad.fatherId, action.payLoad.uid)]
             }
         case actions.delete:
             {
@@ -34,10 +43,10 @@ function reducer(listSubComments, action) {
             return listSubComments;
     }
 }
-function createNewComment(newComment, photo, time, name, fatherId,uid) {
-    return { key: Date.now(), photo: photo, name: name, time: time, comment: newComment, fatherId: fatherId,ownTime:Date.now(),uid:uid}
+function createNewComment(newComment, photo, time, name, fatherId, uid) {
+    return { key: Date.now(), photo: photo, name: name, time: time, comment: newComment, fatherId: fatherId, ownTime: Date.now(), uid: uid }
 }
-function CommentBox({ id, name, comment, photo, mine, dispatch, setAppTime,ownTime,likes }) {///////////
+function CommentBox({ id, name, comment, photo, mine, dispatch, setAppTime, ownTime, likes }) {///////////
     const [timeAgo, setTimeAgo] = useState(0);
     const { appTime } = useContext(AppTimeContext)
     const { currentUser } = useContext(CurrentUserContext);
@@ -47,23 +56,32 @@ function CommentBox({ id, name, comment, photo, mine, dispatch, setAppTime,ownTi
     const [listSubComents, subDispatch] = useReducer(reducer, []);
     const [newComment, setNewComment] = useState("");
     const [reply, setReply] = useState(false);
-    const[localLikes,setLocalLikes]=useState(likes)
+    const [localLikes, setLocalLikes] = useState(likes)
+    const messagesCol = collection(db, 'messages');
     useEffect(() => {
-        const data = localStorage.getItem(`listSubComents${id}`);
+        /* const data = localStorage.getItem(`listSubComents${id}`);
         if (data) {
             subDispatch({ type: actions.charge, payLoad: { listComments: JSON.parse(data) } })
-
-        }
+        } */
+        getDocs(messagesCol).then((snapshot) => {
+            let info = [];
+            snapshot.docs.forEach((element) => {
+                info.push({ ...element.data(), id: element.id });
+            })
+            const myList = info.filter((infito) => {
+                return infito.id == id;
+            })
+            subDispatch({ type: actions.charge, payLoad: { listComments: JSON.parse(myList[0].listSubComments) } })
+        })
     }, [])
     useEffect(() => {
-        console.log("likes",likes)
-    }, [likes])
-    
-    useEffect(() => {
-        localStorage.setItem(`listSubComents${id}`, JSON.stringify(listSubComents))
+        //localStorage.setItem(`listSubComents${id}`, JSON.stringify(listSubComents))
+        if (listSubComents.length !== 0)
+            setSubComment(id);
+
     }, [listSubComents])
 
-  
+
     function ShowTimeAgo() {
         let seconds = Math.round(timeAgo / 1000);
         let response;
@@ -136,8 +154,15 @@ function CommentBox({ id, name, comment, photo, mine, dispatch, setAppTime,ownTi
     function handleSendComent() {
         setReply(false);
         setAppTime(Date.now());
-        subDispatch({ type: actions.addComment, payLoad: { newComment: newComment, time: Date.now(), photo: auth.currentUser.photoURL,name:auth.currentUser.displayName, fatherId: id,uid:auth.currentUser.uid } })
+        subDispatch({ type: actions.addComment, payLoad: { newComment: newComment, time: Date.now(), photo: auth.currentUser.photoURL, name: auth.currentUser.displayName, fatherId: id, uid: auth.currentUser.uid } })
         setNewComment("")
+        setSubComment(id);
+    }
+    function setSubComment(id) {
+        setDoc(doc(db, "messages", `${id}`),
+            {
+                listSubComments: JSON.stringify(listSubComents)
+            });
     }
     return (
         <>
@@ -152,9 +177,9 @@ function CommentBox({ id, name, comment, photo, mine, dispatch, setAppTime,ownTi
                 {edit && <textarea className="comment" value={upDatedComment} onChange={(e) => { handleUpDateComment(e); }}></textarea>}
                 <div className="thirdColumn">
                     <div className="buttonsAndLikes">
-                        <button className="plus" onClick={() => {setLocalLikes(localLikes+1);dispatch({type:actions.sumLike,payLoad:{id:id,localLikes:localLikes+1}})}}><IconPlus /></button>
+                        <button className="plus" onClick={() => { setLocalLikes(localLikes + 1); dispatch({ type: actions.sumLike, payLoad: { id: id, localLikes: localLikes + 1 } }) }}><IconPlus /></button>
                         <span className="numerLikes">{localLikes}</span>
-                        <button className="minus" onClick={() => { setLocalLikes(localLikes-1);dispatch({type:actions.minLike,payLoad:{id:id,localLikes:localLikes-1}}) }}><IconMinus /></button>
+                        <button className="minus" onClick={() => { setLocalLikes(localLikes - 1); dispatch({ type: actions.minLike, payLoad: { id: id, localLikes: localLikes - 1 } }) }}><IconMinus /></button>
                     </div>
                     <div className="footSection">
                         {
@@ -178,11 +203,10 @@ function CommentBox({ id, name, comment, photo, mine, dispatch, setAppTime,ownTi
 
                 {
                     listSubComents.map((comentObj) => {
-                        if(comentObj.fatherId === id)
-                        {
-                            return <SubCommentBox key={comentObj.key} photo={comentObj.photo} name={comentObj.name} comment={comentObj.comment} mine={comentObj.uid===auth.currentUser.uid?true:false} subDispatch={subDispatch} id={comentObj.key} setAppTime={setAppTime} ownTime={comentObj.ownTime}fatherId={id}/>
+                        if (comentObj.fatherId === id) {
+                            return <SubCommentBox key={comentObj.key} photo={comentObj.photo} name={comentObj.name} comment={comentObj.comment} mine={comentObj.uid === auth.currentUser.uid ? true : false} subDispatch={subDispatch} id={comentObj.key} setAppTime={setAppTime} ownTime={comentObj.ownTime} fatherId={id} />
                         }
-                            
+
                         else return null
                     })
 
