@@ -5,7 +5,7 @@ import { ReactComponent as IconReply } from "../images/icon-reply.svg";
 import { ReactComponent as IconDelete } from "../images/icon-delete.svg";
 import { ReactComponent as IconEdit } from "../images/icon-edit.svg";
 import DeleteBox from './DeleteBox';
-import { AppTimeContext, CurrentUserContext } from '../Context';
+import { AppTimeContext} from '../Context';
 import "../styles/commentBox.css";
 import { actions } from '../App';
 import {auth} from '../App';
@@ -13,7 +13,6 @@ function SubCommentBox({ photo, name, comment, mine, subDispatch, id, setAppTime
     const [likes, setLikes] = useState(0);
     const [timeAgo, setTimeAgo] = useState(0);
     const { appTime } = useContext(AppTimeContext)
-    const { currentUser } = useContext(CurrentUserContext)
     const [showDeleteBox, setShowDeleteBox] = useState(false);
     const [edit, setEdit] = useState(false);
     const [upDatedComment, setUpDatedComment] = useState(comment);

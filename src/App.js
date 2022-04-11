@@ -1,9 +1,10 @@
 import './styles/app.css';
-import { useState, useReducer, useEffect, useRef } from "react";
+import { useState, useReducer, useEffect, useRef,useContext } from "react";
 import CommentBox from "./components/CommentBox.js";
 import { AppTimeContext } from './Context';
 import { CurrentUserContext } from './Context';
 import LogIn from './components/LogIn';
+import { likedContext } from './Context';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore'
@@ -14,8 +15,9 @@ import {
   addDoc,
   setDoc,
   doc,
-  updateDoc
-}from 'firebase/firestore'
+  updateDoc,
+  onSnapshot
+} from 'firebase/firestore'
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
 import LogOut from './components/LogOut';
@@ -40,16 +42,18 @@ export const actions = {
   copy: "copy",
   charge: "charge",
   minLike: "minLike",
-  sumLike: "sumLike"
+  sumLike: "sumLike",
+  like: "like",
+  noLike: "noLike"
 }
-export const db= getFirestore();
+export const db = getFirestore();
 export const auth = firebase.auth();
 function reducer(listComents, action) {
   switch (action.type) {
     case actions.addComment:
       {
-        return [...listComents, createNewComment(action.payLoad.newComment, action.payLoad.photo, action.payLoad.time, action.payLoad.name, action.payLoad.uid,Date.now())]
-      }     
+        return [...listComents, createNewComment(action.payLoad.newComment, action.payLoad.photo, action.payLoad.time, action.payLoad.name, action.payLoad.uid, Date.now())]
+      }
     case actions.delete:
       {
         console.log("delete");
@@ -64,22 +68,41 @@ function reducer(listComents, action) {
       })
     case actions.charge:
       return action.payLoad.listComments
-    case actions.sumLike:
+    case actions.like:
       {
+        let status;
+        status=false;
+        action.payLoad.setHasLiked(!action.payLoad.hasLiked)
+        console.log(action.payLoad.hasLiked,"action.payLoad.hasLiked")
+        console.log(listComents,"listComents")
         return listComents.map((comentObj) => {
           if (comentObj.key === action.payLoad.id) {
-            comentObj.likes = action.payLoad.localLikes;
-            console.log("sumo")
+            comentObj.peopleLike.forEach((element) => {
+              if (action.payLoad.name === element) {//ya estaba
+                status = true;
+              }
+            })
+            if (action.payLoad.hasLiked) {
+              console.log("chau")
+              comentObj.peopleLike = [...comentObj.peopleLike.filter((element) => {
+                return element !== action.payLoad.name
+              })]
+            }
+              
+              else {
+                comentObj.peopleLike=[...comentObj.peopleLike,addnewPerson(action.payLoad.name)]
+              }
+            
           }
           return comentObj;
         })
       }
-    case actions.minLike:
+    case actions.noLike:
       {
         return listComents.map((comentObj) => {
           if (comentObj.key === action.payLoad.id) {
-            comentObj.likes = action.payLoad.localLikes;
-            console.log("entro al likesmin")
+            comentObj.peopleNoLike.push(action.payLoad.name)
+            console.log(comentObj.peopleNoLike);
           }
           return comentObj;
         })
@@ -88,54 +111,65 @@ function reducer(listComents, action) {
       return listComents;
   }
 }
-function createNewComment(newComment, photo, time, name, uid,key) {
+function createNewComment(newComment, photo, time, name, uid, key) {
   addSubcomments(key);
-  return { key: key, photo: photo, name: name, time: time, comment: newComment, ownTime: Date.now(), likes: 0, uid: uid }
+  return { key: key, photo: photo, name: name, time: time, comment: newComment, ownTime: Date.now(), uid: uid, peopleLike: [], peopleNoLike: [] }
 }
-function addSubcomments(id)
-  {
-    /* addDoc(messagesCol,{
-      listSubComments:""
-  }); */
-  setDoc(doc(db,"messages",`${id}`),
+function addnewPerson(person)
 {
-  listSubComments:""
-});
-  }
+  console.log("hola")
+  return person;
+}
+function addSubcomments(id) {
+  /* addDoc(messagesCol,{
+    listSubComments:""
+}); */
+  setDoc(doc(db, "messages", `${id}`),
+    {
+      listSubComments: ""
+    });
+}
 function App() {////////////////////////////////////////
   const dummy = useRef();
-  const messagesCol=collection(db,'messages');
-  const docRef=doc(db,'messages','oSUw9RAfj1P3FmUrlmkN');
-  const listCommentsRef=firestore.collection('messages').doc('listComments');
- const messagesRef = firestore.collection('messages');
+  const [hasLiked, setHasLiked] = useState(false);//this is to refresh state in reducer
+  const messagesCol = collection(db, 'messages');
+  const docRef = doc(db, 'messages', 'RZWJFOitXlmBGLQsPoWy');
+  const listCommentsRef = firestore.collection('messages').doc('listComments');
+  const messagesRef = firestore.collection('messages');
   const [user] = useAuthState(auth)
   const [newComment, setNewComment] = useState("");
   const [listComents, dispatch] = useReducer(reducer, []);
   const [appTime, setAppTime] = useState(Date.now());
   const [currentUser, setCurrentUser] = useState("")
   const [messages] = useCollectionData(messagesRef, { idField: 'id' });
-  const listCommentsId="oSUw9RAfj1P3FmUrlmkN";
-  useEffect(()=>
-  {
-    /* if(messages)
-    {
-      dispatch({ type: actions.charge, payLoad: { listComments: JSON.parse(messages.id("oSUw9RAfj1P3FmUrlmkN").listComments) } })
-
-    } */
-     getDocs(messagesCol).then((snapshot)=>{
-       let info=[];
-       snapshot.docs.forEach((element)=>{
-         info.push({...element.data(),id:element.id});
-       })
-       const myList=info.filter((info)=>{
-            return info.id===listCommentsId;
-       }) 
-  dispatch({ type: actions.charge, payLoad: { listComments: JSON.parse(myList[0].listComments) } })
-    }) 
-  },[])
+  const listCommentsId = "RZWJFOitXlmBGLQsPoWy";
   useEffect(() => {
-    if(listComents.length!==0)
-    {    
+    getDocs(messagesCol).then((snapshot) => {
+      let info = [];
+      snapshot.docs.forEach((element) => {
+        info.push({ ...element.data(), id: element.id });
+      })
+      const myList = info.filter((info) => {
+        return info.id === listCommentsId;
+      })
+      dispatch({ type: actions.charge, payLoad: { listComments: JSON.parse(myList[0].listComments) } })
+    })
+  }, [])
+  /* useEffect(() => {
+    onSnapshot(messagesCol, (snapshot) => {
+      let info = [];
+      snapshot.docs.forEach((element) => {
+        info.push({ ...element.data(), id: element.id });
+      })
+      const myList = info.filter((info) => {
+        return info.id === listCommentsId;
+      })
+      dispatch({ type: actions.charge, payLoad: { listComments: JSON.parse(myList[0].listComments) } })
+    })
+  }, []) */
+
+  useEffect(() => {
+    if (listComents.length !== 0) {
       sendMessage();
     }
   }, [listComents])
@@ -148,31 +182,29 @@ function App() {////////////////////////////////////////
     setNewComment("")
     //addSubcomments();//cuando meto esto se laguea, por que?creo que debe ser que esta leyendo y escribiedo
   }
-  function log(logi)
-  {
+  function log(logi) {
     console.log(logi);
   }
-function sendMessage()
-{
-  updateDoc(docRef,{
-    listComments:JSON.stringify(listComents)
-  })
+  function sendMessage() {
+    updateDoc(docRef, {
+      listComments: JSON.stringify(listComents)
+    })
 
-}// el problema es que send message se ejecuta antes de poder actualizar el mensaje
+  }// el problema es que send message se ejecuta antes de poder actualizar el mensaje
   return (
     <AppTimeContext.Provider value={{ appTime, setAppTime }}>
-      <CurrentUserContext.Provider value={{ currentUser, setCurrentUser }}>
+      <likedContext.Provider value={{ hasLiked, setHasLiked }}>
         {!user ? <LogIn /> :
           <div className="app">
             <header className='header'>
               <LogOut />
             </header>
             <div className="comments">
-              {listComents&&
+              {listComents &&
                 listComents.map((comentObj) => {//sumo uid a mine
-                  return <CommentBox key={comentObj.key} photo={comentObj.photo} name={comentObj.name} comment={comentObj.comment} mine={comentObj.uid === auth.currentUser.uid ? true : false} dispatch={dispatch} id={comentObj.key} setAppTime={setAppTime} ownTime={comentObj.ownTime} likes={comentObj.likes} />
+                  return <CommentBox key={comentObj.key} photo={comentObj.photo} name={comentObj.name} comment={comentObj.comment} mine={comentObj.uid === auth.currentUser.uid ? true : false} dispatch={dispatch} id={comentObj.key} setAppTime={setAppTime} ownTime={comentObj.ownTime} peopleLike={comentObj.peopleLike} peopleNoLike={comentObj.peopleNoLike} />
                 })
-                
+
               }
               <div ref={dummy.current}></div>
             </div>
@@ -185,7 +217,7 @@ function sendMessage()
             </div>
           </div>
         }
-      </CurrentUserContext.Provider>
+      </likedContext.Provider>
     </AppTimeContext.Provider>
   );
 }

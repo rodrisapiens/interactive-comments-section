@@ -4,8 +4,7 @@ import { ReactComponent as IconMinus } from "../images/icon-minus.svg";
 import { ReactComponent as IconReply } from "../images/icon-reply.svg";
 import { ReactComponent as IconDelete } from "../images/icon-delete.svg";
 import { ReactComponent as IconEdit } from "../images/icon-edit.svg";
-import { AppTimeContext } from '../Context';
-import { CurrentUserContext } from '../Context';
+import { AppTimeContext, likedContext } from '../Context';
 import "../styles/commentBox.css";
 import DeleteBox from './DeleteBox';
 import { actions, auth, db } from '../App';
@@ -46,18 +45,28 @@ function reducer(listSubComments, action) {
 function createNewComment(newComment, photo, time, name, fatherId, uid) {
     return { key: Date.now(), photo: photo, name: name, time: time, comment: newComment, fatherId: fatherId, ownTime: Date.now(), uid: uid }
 }
-function CommentBox({ id, name, comment, photo, mine, dispatch, setAppTime, ownTime, likes }) {///////////
+function CommentBox({ id, name, comment, photo, mine, dispatch, setAppTime, ownTime,peopleLike,peopleNoLike }) {///////////
     const [timeAgo, setTimeAgo] = useState(0);
     const { appTime } = useContext(AppTimeContext)
-    const { currentUser } = useContext(CurrentUserContext);
     const [showDeleteBox, setShowDeleteBox] = useState(false);
     const [edit, setEdit] = useState(false);
     const [upDatedComment, setUpDatedComment] = useState(comment);
     const [listSubComents, subDispatch] = useReducer(reducer, []);
     const [newComment, setNewComment] = useState("");
     const [reply, setReply] = useState(false);
-    const [localLikes, setLocalLikes] = useState(likes)
     const messagesCol = collection(db, 'messages');
+    const[liked,setLiked]=useState(false);
+    const {hasLiked,setHasLiked}=useContext(likedContext)
+    useEffect(() => {
+    peopleLike && peopleLike.forEach((element)=>{
+        if(element===auth.currentUser.name)
+        {
+            setLiked(true)
+        }
+    })
+      
+    }, [])
+    
     useEffect(() => {
         /* const data = localStorage.getItem(`listSubComents${id}`);
         if (data) {
@@ -71,6 +80,7 @@ function CommentBox({ id, name, comment, photo, mine, dispatch, setAppTime, ownT
             const myList = info.filter((infito) => {
                 return infito.id == id;
             })
+            console.log(myList)
             subDispatch({ type: actions.charge, payLoad: { listComments: JSON.parse(myList[0].listSubComments) } })
         })
     }, [])
@@ -78,10 +88,7 @@ function CommentBox({ id, name, comment, photo, mine, dispatch, setAppTime, ownT
         //localStorage.setItem(`listSubComents${id}`, JSON.stringify(listSubComents))
         if (listSubComents.length !== 0)
             setSubComment(id);
-
     }, [listSubComents])
-
-
     function ShowTimeAgo() {
         let seconds = Math.round(timeAgo / 1000);
         let response;
@@ -164,6 +171,12 @@ function CommentBox({ id, name, comment, photo, mine, dispatch, setAppTime, ownT
                 listSubComments: JSON.stringify(listSubComents)
             });
     }
+    function handlePlus()
+    {
+        dispatch({type:actions.like,payLoad:{name:auth.currentUser.displayName,id: id,setHasLiked:setHasLiked,hasLiked:hasLiked}})
+        setLiked(!liked)
+        //setHasLiked(!hasLiked)
+    }
     return (
         <>
             <div className='CommentBox'>
@@ -177,9 +190,10 @@ function CommentBox({ id, name, comment, photo, mine, dispatch, setAppTime, ownT
                 {edit && <textarea className="comment" value={upDatedComment} onChange={(e) => { handleUpDateComment(e); }}></textarea>}
                 <div className="thirdColumn">
                     <div className="buttonsAndLikes">
-                        <button className="plus" onClick={() => { setLocalLikes(localLikes + 1); dispatch({ type: actions.sumLike, payLoad: { id: id, localLikes: localLikes + 1 } }) }}><IconPlus /></button>
-                        <span className="numerLikes">{localLikes}</span>
-                        <button className="minus" onClick={() => { setLocalLikes(localLikes - 1); dispatch({ type: actions.minLike, payLoad: { id: id, localLikes: localLikes - 1 } }) }}><IconMinus /></button>
+                        <button className={liked?"plus like":"plus"} onClick={() => {handlePlus()}}><IconPlus /></button>
+{/*                         <button className="plus" onClick={() => { setLocalLikes(localLikes + 1); dispatch({ type: actions.sumLike, payLoad: { id: id, localLikes: localLikes + 1 } }) }}><IconPlus /></button>
+ */}                        <span className="numerLikes">{peopleLike?peopleLike.length:0}</span>
+                        <button className="minus" onClick={() => {dispatch({ type: actions.noLike, payLoad: { id: id,name:auth.currentUser.displayName } }) }}><IconMinus /></button>
                     </div>
                     <div className="footSection">
                         {

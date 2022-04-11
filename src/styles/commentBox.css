@@ -78,6 +78,10 @@
   width: 2.5rem;
 }
 
+.like path {
+  fill: #ED6368;
+}
+
 .numerLikes {
   color: #595a92;
   font-weight: 500;
