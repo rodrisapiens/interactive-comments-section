@@ -60,16 +60,19 @@ function CommentBox({ id, name, comment, photo, mine, dispatch, setAppTime, ownT
     useEffect(() => {
     peopleLike && peopleLike.forEach((element)=>{
         console.log(element,"element")
-        console.log(auth.currentUser.displayName,"user")
         if(element===auth.currentUser.displayName)
         {
-            console.log("holaxd")
             setLiked(true)
+            console.log("esta")
+
         }
-        else{setLiked(false) }
+        else{
+            setLiked(false)
+            console.log("no esta")
+        }
     })
       
-    }, [hasLiked,auth])
+    }, [hasLiked])
     
     useEffect(() => {
         /* const data = localStorage.getItem(`listSubComents${id}`);
@@ -177,8 +180,6 @@ function CommentBox({ id, name, comment, photo, mine, dispatch, setAppTime, ownT
     function handlePlus()
     {
         dispatch({type:actions.like,payLoad:{name:auth.currentUser.displayName,id: id,setHasLiked:setHasLiked,hasLiked:hasLiked}})
-        //setLiked(!liked)
-        //setHasLiked(!hasLiked)
     }
     return (
         <>
@@ -193,7 +194,7 @@ function CommentBox({ id, name, comment, photo, mine, dispatch, setAppTime, ownT
                 {edit && <textarea className="comment" value={upDatedComment} onChange={(e) => { handleUpDateComment(e); }}></textarea>}
                 <div className="thirdColumn">
                     <div className="buttonsAndLikes">
-                        <button className={liked?"plus like":"plus"} onClick={() => {handlePlus()}}><IconPlus /></button>
+                        <button className={peopleLike.length!==0?liked?"plus like":"plus":"plus"} onClick={() => {handlePlus()}}><IconPlus /></button>
 {/*                         <button className="plus" onClick={() => { setLocalLikes(localLikes + 1); dispatch({ type: actions.sumLike, payLoad: { id: id, localLikes: localLikes + 1 } }) }}><IconPlus /></button>
  */}                        <span className="numerLikes">{peopleLike?peopleLike.length:0}</span>
                         <button className="minus" onClick={() => {dispatch({ type: actions.noLike, payLoad: { id: id,name:auth.currentUser.displayName } }) }}><IconMinus /></button>
