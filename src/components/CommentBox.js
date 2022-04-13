@@ -48,7 +48,7 @@ function reducer(listSubComments, action) {
                         comentObj.peopleLike.forEach((element) => {
                             if (action.payLoad.name === element) {//ya estaba
                                 status = true;
-                                console.log("hola")
+        
                             }
                         })
                         if (status) {
@@ -59,6 +59,7 @@ function reducer(listSubComments, action) {
                         }
 
                         else {
+                            console.log("hola")
                             comentObj.peopleLike = [...comentObj.peopleLike, addnewPerson(action.payLoad.name)]
                         }
                         console.log(comentObj.peopleLike)
@@ -280,7 +281,7 @@ function CommentBox({ id, name, comment, photo, mine, dispatch, setAppTime, ownT
                 {
                     listSubComents.map((comentObj) => {
                         if (comentObj.fatherId === id) {
-                            return <SubCommentBox key={comentObj.key} photo={comentObj.photo} name={comentObj.name} comment={comentObj.comment} mine={comentObj.uid === auth.currentUser.uid ? true : false} subDispatch={subDispatch} id={comentObj.key} setAppTime={setAppTime} ownTime={comentObj.ownTime} fatherId={id} />
+                            return <SubCommentBox key={comentObj.key} photo={comentObj.photo} name={comentObj.name} comment={comentObj.comment} mine={comentObj.uid === auth.currentUser.uid ? true : false} subDispatch={subDispatch} id={comentObj.key} setAppTime={setAppTime} ownTime={comentObj.ownTime} fatherId={id} peopleLike={comentObj.peopleLike} peopleNoLike={comentObj.peopleNoLike} />
                         }
 
                         else return null

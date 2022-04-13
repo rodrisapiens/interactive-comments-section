@@ -34,9 +34,11 @@ function SubCommentBox({ photo, name, comment, mine, subDispatch, id, setAppTime
     }, [hasLiked,auth])
     useEffect(() => {
         let status=false;
+        console.log()
     peopleLike && peopleNoLike.forEach((element)=>{
         if(element===auth.currentUser.uid)
         {
+            console.log("element===auth.currentUser.uid")
             status=true;
         }
     })
