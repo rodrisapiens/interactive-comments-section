@@ -59,13 +59,16 @@ function CommentBox({ id, name, comment, photo, mine, dispatch, setAppTime, ownT
     const {hasLiked,setHasLiked}=useContext(likedContext)
     useEffect(() => {
     peopleLike && peopleLike.forEach((element)=>{
+        console.log(element,"element")
+        console.log(auth.currentUser.name,"user")
         if(element===auth.currentUser.name)
         {
+            console.log("holaxd")
             setLiked(true)
         }
     })
       
-    }, [])
+    }, [hasLiked,auth])
     
     useEffect(() => {
         /* const data = localStorage.getItem(`listSubComents${id}`);
@@ -80,7 +83,6 @@ function CommentBox({ id, name, comment, photo, mine, dispatch, setAppTime, ownT
             const myList = info.filter((infito) => {
                 return infito.id == id;
             })
-            console.log(myList)
             subDispatch({ type: actions.charge, payLoad: { listComments: JSON.parse(myList[0].listSubComments) } })
         })
     }, [])
@@ -174,7 +176,7 @@ function CommentBox({ id, name, comment, photo, mine, dispatch, setAppTime, ownT
     function handlePlus()
     {
         dispatch({type:actions.like,payLoad:{name:auth.currentUser.displayName,id: id,setHasLiked:setHasLiked,hasLiked:hasLiked}})
-        setLiked(!liked)
+        //setLiked(!liked)
         //setHasLiked(!hasLiked)
     }
     return (
