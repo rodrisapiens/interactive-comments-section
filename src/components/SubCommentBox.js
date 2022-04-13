@@ -5,11 +5,12 @@ import { ReactComponent as IconReply } from "../images/icon-reply.svg";
 import { ReactComponent as IconDelete } from "../images/icon-delete.svg";
 import { ReactComponent as IconEdit } from "../images/icon-edit.svg";
 import DeleteBox from './DeleteBox';
+import { likedContext } from '../Context';
 import { AppTimeContext} from '../Context';
 import "../styles/commentBox.css";
 import { actions } from '../App';
 import {auth} from '../App';
-function SubCommentBox({ photo, name, comment, mine, subDispatch, id, setAppTime, ownTime,fatherId}) {//////////////
+function SubCommentBox({ photo, name, comment, mine, subDispatch, id, setAppTime, ownTime,fatherId,peopleLike, peopleNoLike}) {//////////////
     const [likes, setLikes] = useState(0);
     const [timeAgo, setTimeAgo] = useState(0);
     const { appTime } = useContext(AppTimeContext)
@@ -18,6 +19,29 @@ function SubCommentBox({ photo, name, comment, mine, subDispatch, id, setAppTime
     const [upDatedComment, setUpDatedComment] = useState(comment);
     const [newComment, setNewComment] = useState("");
     const [reply, setReply] = useState(false);
+    const[liked,setLiked]=useState(false);
+    const [noLiked,setNoLiked]=useState(false);
+    const {hasLiked,setHasLiked}=useContext(likedContext)
+    useEffect(() => {
+        let status=false;
+    peopleLike && peopleLike.forEach((element)=>{
+        if(element===auth.currentUser.uid)
+        {
+            status=true;
+        }
+    })
+      setLiked(status);
+    }, [hasLiked,auth])
+    useEffect(() => {
+        let status=false;
+    peopleLike && peopleNoLike.forEach((element)=>{
+        if(element===auth.currentUser.uid)
+        {
+            status=true;
+        }
+    })
+      setNoLiked(status);
+    }, [hasLiked,auth])
     
     function ShowTimeAgo() {
         let seconds = Math.round(timeAgo / 1000);
@@ -94,6 +118,12 @@ function SubCommentBox({ photo, name, comment, mine, subDispatch, id, setAppTime
     function handleInput(e) {
         setNewComment(e.currentTarget.value);
     }
+    function handlePlus() {
+        subDispatch({ type: actions.like, payLoad: { name: auth.currentUser.uid, id: id, setHasLiked: setHasLiked, hasLiked: hasLiked } })
+    }
+    function handleMinus() {
+        subDispatch({ type: actions.noLike, payLoad: { name: auth.currentUser.uid, id: id, setHasLiked: setHasLiked, hasLiked: hasLiked } })
+    }
     return (
         <>
             <div className='subCommentBox'>
@@ -107,9 +137,9 @@ function SubCommentBox({ photo, name, comment, mine, subDispatch, id, setAppTime
                 {edit && <textarea className="comment" value={upDatedComment} onChange={(e) => { handleUpDateComment(e); }}></textarea>}
                 <div className="thirdColumn">
                     <div className="buttonsAndLikes">
-                        <button className="plus" onClick={() => { setLikes(likes + 1) }}><IconPlus /></button>
-                        <span className="numerLikes">{likes}</span>
-                        <button className="minus" onClick={() => { setLikes(likes - 1) }}><IconMinus /></button>
+                    <button className={peopleLike? liked ? "plus like" : "plus" : "plus"} onClick={() => { handlePlus() }}><IconPlus /></button>
+                            <span className="numerLikes">{peopleLike ? peopleLike.length : 0}</span>
+                        <button className={peopleNoLike? noLiked ? "minus like" : "plus" : "minus"} onClick={() => { handleMinus() }}><IconMinus /></button>
                     </div>
                     <div className="footSection">
                         {

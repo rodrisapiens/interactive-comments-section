@@ -99,10 +99,26 @@ function reducer(listComents, action) {
       }
     case actions.noLike:
       {
+        let status;
+        status=false;
+        action.payLoad.setHasLiked(!action.payLoad.hasLiked)
         return listComents.map((comentObj) => {
           if (comentObj.key === action.payLoad.id) {
-            comentObj.peopleNoLike.push(action.payLoad.name)
-            console.log(comentObj.peopleNoLike);
+            comentObj.peopleNoLike.forEach((element) => {
+              if (action.payLoad.name === element) {//ya estaba
+                status = true;
+              }
+            })
+            if (status) {
+              comentObj.peopleNoLike = [...comentObj.peopleNoLike.filter((element) => {
+                return element !== action.payLoad.name
+              })]
+            }
+              
+              else {
+                comentObj.peopleNoLike=[...comentObj.peopleNoLike,addnewPerson(action.payLoad.name)]
+              }
+            
           }
           return comentObj;
         })
@@ -117,13 +133,9 @@ function createNewComment(newComment, photo, time, name, uid, key) {
 }
 function addnewPerson(person)
 {
-  console.log("hola")
   return person;
 }
 function addSubcomments(id) {
-  /* addDoc(messagesCol,{
-    listSubComments:""
-}); */
   setDoc(doc(db, "messages", `${id}`),
     {
       listSubComments: ""
@@ -133,7 +145,7 @@ function App() {////////////////////////////////////////
   const dummy = useRef();
   const [hasLiked, setHasLiked] = useState(false);//this is to refresh state in reducer
   const messagesCol = collection(db, 'messages');
-  const docRef = doc(db, 'messages', 'RZWJFOitXlmBGLQsPoWy');
+  const docRef = doc(db, 'messages', 'HjTEZqzFr0UOFjKPOt5Y');
   const listCommentsRef = firestore.collection('messages').doc('listComments');
   const messagesRef = firestore.collection('messages');
   const [user] = useAuthState(auth)
@@ -142,7 +154,7 @@ function App() {////////////////////////////////////////
   const [appTime, setAppTime] = useState(Date.now());
   const [currentUser, setCurrentUser] = useState("")
   const [messages] = useCollectionData(messagesRef, { idField: 'id' });
-  const listCommentsId = "RZWJFOitXlmBGLQsPoWy";
+  const listCommentsId = "HjTEZqzFr0UOFjKPOt5Y";
   useEffect(() => {
     getDocs(messagesCol).then((snapshot) => {
       let info = [];

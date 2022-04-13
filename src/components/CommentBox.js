@@ -38,14 +38,72 @@ function reducer(listSubComments, action) {
             })
         case actions.charge:
             return action.payLoad.listComments
+        case actions.like:
+            {
+                let status;
+                status = false;
+                action.payLoad.setHasLiked(!action.payLoad.hasLiked)
+                return listSubComments.map((comentObj) => {
+                    if (comentObj.key === action.payLoad.id) {
+                        comentObj.peopleLike.forEach((element) => {
+                            if (action.payLoad.name === element) {//ya estaba
+                                status = true;
+                                console.log("hola")
+                            }
+                        })
+                        if (status) {
+                            console.log("chau")
+                            comentObj.peopleLike = [...comentObj.peopleLike.filter((element) => {
+                                return element !== action.payLoad.name
+                            })]
+                        }
+
+                        else {
+                            comentObj.peopleLike = [...comentObj.peopleLike, addnewPerson(action.payLoad.name)]
+                        }
+                        console.log(comentObj.peopleLike)
+                    }
+                    return comentObj;
+                })
+            }
+        case actions.noLike:
+            {
+                let status;
+                status = false;
+                action.payLoad.setHasLiked(!action.payLoad.hasLiked)
+                return listSubComments.map((comentObj) => {
+                    if (comentObj.key === action.payLoad.id) {
+                        comentObj.peopleNoLike.forEach((element) => {
+                            if (action.payLoad.name === element) {//ya estaba
+                                status = true;
+                            }
+                        })
+                        if (status) {
+                            comentObj.peopleNoLike = [...comentObj.peopleNoLike.filter((element) => {
+                                return element !== action.payLoad.name
+                            })]
+                        }
+
+                        else {
+                            comentObj.peopleNoLike = [...comentObj.peopleNoLike, addnewPerson(action.payLoad.name)]
+                        }
+
+                    }
+                    return comentObj;
+                })
+            }
         default:
             return listSubComments;
     }
 }
 function createNewComment(newComment, photo, time, name, fatherId, uid) {
-    return { key: Date.now(), photo: photo, name: name, time: time, comment: newComment, fatherId: fatherId, ownTime: Date.now(), uid: uid }
+    return { key: Date.now(), photo: photo, name: name, time: time, comment: newComment, fatherId: fatherId, ownTime: Date.now(), uid: uid,peopleLike: [], peopleNoLike: [] }
 }
-function CommentBox({ id, name, comment, photo, mine, dispatch, setAppTime, ownTime,peopleLike,peopleNoLike }) {///////////
+function addnewPerson(person)
+{
+  return person;
+}
+function CommentBox({ id, name, comment, photo, mine, dispatch, setAppTime, ownTime, peopleLike, peopleNoLike }) {///////////
     const [timeAgo, setTimeAgo] = useState(0);
     const { appTime } = useContext(AppTimeContext)
     const [showDeleteBox, setShowDeleteBox] = useState(false);
@@ -55,26 +113,29 @@ function CommentBox({ id, name, comment, photo, mine, dispatch, setAppTime, ownT
     const [newComment, setNewComment] = useState("");
     const [reply, setReply] = useState(false);
     const messagesCol = collection(db, 'messages');
-    const[liked,setLiked]=useState(false);
-    const {hasLiked,setHasLiked}=useContext(likedContext)
+    const [liked, setLiked] = useState(false);
+    const [noLiked, setNoLiked] = useState(false);
+    const { hasLiked, setHasLiked } = useContext(likedContext)
     useEffect(() => {
-        let status=false;
-    peopleLike && peopleLike.forEach((element)=>{
-        console.log(element,"element")
-        if(element===auth.currentUser.displayName)
-        {
-            status=true;
-        }
-    })
-        console.log(status,"status")
-      setLiked(status);
-    }, [hasLiked,auth])
-    
+        let status = false;
+        peopleLike && peopleLike.forEach((element) => {
+            if (element === auth.currentUser.uid) {
+                status = true;
+            }
+        })
+        setLiked(status);
+    }, [hasLiked, auth])
     useEffect(() => {
-        /* const data = localStorage.getItem(`listSubComents${id}`);
-        if (data) {
-            subDispatch({ type: actions.charge, payLoad: { listComments: JSON.parse(data) } })
-        } */
+        let status = false;
+        peopleLike && peopleNoLike.forEach((element) => {
+            if (element === auth.currentUser.uid) {
+                status = true;
+            }
+        })
+        setNoLiked(status);
+    }, [hasLiked, auth])
+
+    useEffect(() => {
         getDocs(messagesCol).then((snapshot) => {
             let info = [];
             snapshot.docs.forEach((element) => {
@@ -163,7 +224,7 @@ function CommentBox({ id, name, comment, photo, mine, dispatch, setAppTime, ownT
     function handleSendComent() {
         setReply(false);
         setAppTime(Date.now());
-        subDispatch({ type: actions.addComment, payLoad: { newComment: newComment, time: Date.now(), photo: auth.currentUser.photoURL, name: auth.currentUser.displayName, fatherId: id, uid: auth.currentUser.uid } })
+        subDispatch({ type: actions.addComment, payLoad: { newComment: newComment, time: Date.now(), photo: auth.currentUser.photoURL, name: auth.currentUser.displayName, fatherId: id, uid: auth.currentUser.uid} })
         setNewComment("")
         setSubComment(id);
     }
@@ -173,9 +234,11 @@ function CommentBox({ id, name, comment, photo, mine, dispatch, setAppTime, ownT
                 listSubComments: JSON.stringify(listSubComents)
             });
     }
-    function handlePlus()
-    {
-        dispatch({type:actions.like,payLoad:{name:auth.currentUser.displayName,id: id,setHasLiked:setHasLiked,hasLiked:hasLiked}})
+    function handlePlus() {
+        dispatch({ type: actions.like, payLoad: { name: auth.currentUser.uid, id: id, setHasLiked: setHasLiked, hasLiked: hasLiked } })
+    }
+    function handleMinus() {
+        dispatch({ type: actions.noLike, payLoad: { name: auth.currentUser.uid, id: id, setHasLiked: setHasLiked, hasLiked: hasLiked } })
     }
     return (
         <>
@@ -190,10 +253,9 @@ function CommentBox({ id, name, comment, photo, mine, dispatch, setAppTime, ownT
                 {edit && <textarea className="comment" value={upDatedComment} onChange={(e) => { handleUpDateComment(e); }}></textarea>}
                 <div className="thirdColumn">
                     <div className="buttonsAndLikes">
-                        <button className={peopleLike.length!==0?liked?"plus like":"plus":"plus"} onClick={() => {handlePlus()}}><IconPlus /></button>
-{/*                         <button className="plus" onClick={() => { setLocalLikes(localLikes + 1); dispatch({ type: actions.sumLike, payLoad: { id: id, localLikes: localLikes + 1 } }) }}><IconPlus /></button>
- */}                        <span className="numerLikes">{peopleLike?peopleLike.length:0}</span>
-                        <button className="minus" onClick={() => {dispatch({ type: actions.noLike, payLoad: { id: id,name:auth.currentUser.displayName } }) }}><IconMinus /></button>
+                        <button className={peopleLike.length !== 0 ? liked ? "plus like" : "plus" : "plus"} onClick={() => { handlePlus() }}><IconPlus /></button>
+                            <span className="numerLikes">{peopleLike ? peopleLike.length : 0}</span>
+                        <button className={peopleNoLike.length !== 0 ? noLiked ? "minus like" : "plus" : "minus"} onClick={() => { handleMinus() }}><IconMinus /></button>
                     </div>
                     <div className="footSection">
                         {
