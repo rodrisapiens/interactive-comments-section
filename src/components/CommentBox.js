@@ -58,21 +58,17 @@ function CommentBox({ id, name, comment, photo, mine, dispatch, setAppTime, ownT
     const[liked,setLiked]=useState(false);
     const {hasLiked,setHasLiked}=useContext(likedContext)
     useEffect(() => {
+        let status=false;
     peopleLike && peopleLike.forEach((element)=>{
         console.log(element,"element")
         if(element===auth.currentUser.displayName)
         {
-            setLiked(true)
-            console.log("esta")
-
-        }
-        else{
-            setLiked(false)
-            console.log("no esta")
+            status=true;
         }
     })
-      
-    }, [hasLiked])
+        console.log(status,"status")
+      setLiked(status);
+    }, [hasLiked,auth])
     
     useEffect(() => {
         /* const data = localStorage.getItem(`listSubComents${id}`);
