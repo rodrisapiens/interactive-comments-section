@@ -82,7 +82,7 @@ function reducer(listComents, action) {
                 status = true;
               }
             })
-            if (action.payLoad.hasLiked) {
+            if (status) {
               console.log("chau")
               comentObj.peopleLike = [...comentObj.peopleLike.filter((element) => {
                 return element !== action.payLoad.name

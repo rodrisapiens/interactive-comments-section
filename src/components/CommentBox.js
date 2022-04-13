@@ -60,12 +60,13 @@ function CommentBox({ id, name, comment, photo, mine, dispatch, setAppTime, ownT
     useEffect(() => {
     peopleLike && peopleLike.forEach((element)=>{
         console.log(element,"element")
-        console.log(auth.currentUser.name,"user")
-        if(element===auth.currentUser.name)
+        console.log(auth.currentUser.displayName,"user")
+        if(element===auth.currentUser.displayName)
         {
             console.log("holaxd")
             setLiked(true)
         }
+        else{setLiked(false) }
     })
       
     }, [hasLiked,auth])
