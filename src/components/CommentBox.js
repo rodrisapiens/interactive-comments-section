@@ -52,17 +52,14 @@ function reducer(listSubComments, action) {
                             }
                         })
                         if (status) {
-                            console.log("chau")
                             comentObj.peopleLike = [...comentObj.peopleLike.filter((element) => {
                                 return element !== action.payLoad.name
                             })]
                         }
 
                         else {
-                            console.log("hola")
                             comentObj.peopleLike = [...comentObj.peopleLike, addnewPerson(action.payLoad.name)]
                         }
-                        console.log(comentObj.peopleLike)
                     }
                     return comentObj;
                 })
@@ -215,7 +212,6 @@ function CommentBox({ id, name, comment, photo, mine, dispatch, setAppTime, ownT
         setNewComment(`@${name} `);
     }
     function handleUpDateComment(e) {
-        console.log(e.currentTarget.value);
         setUpDatedComment(e.currentTarget.value)
     }
     function handleInput(e) {

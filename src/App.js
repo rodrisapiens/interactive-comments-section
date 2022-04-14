@@ -56,7 +56,6 @@ function reducer(listComents, action) {
       }
     case actions.delete:
       {
-        console.log("delete");
         return listComents.filter((comment) => { return comment.key !== action.payLoad.id })
       }
     case actions.upDate:
@@ -73,8 +72,6 @@ function reducer(listComents, action) {
         let status;
         status=false;
         action.payLoad.setHasLiked(!action.payLoad.hasLiked)
-        console.log(action.payLoad.hasLiked,"action.payLoad.hasLiked")
-        console.log(listComents,"listComents")
         return listComents.map((comentObj) => {
           if (comentObj.key === action.payLoad.id) {
             comentObj.peopleLike.forEach((element) => {
@@ -83,7 +80,6 @@ function reducer(listComents, action) {
               }
             })
             if (status) {
-              console.log("chau")
               comentObj.peopleLike = [...comentObj.peopleLike.filter((element) => {
                 return element !== action.payLoad.name
               })]
@@ -193,9 +189,6 @@ function App() {////////////////////////////////////////
     dispatch({ type: actions.addComment, payLoad: { newComment: newComment, time: Date.now(), photo: auth.currentUser.photoURL, name: auth.currentUser.displayName, uid: auth.currentUser.uid } })
     setNewComment("")
     //addSubcomments();//cuando meto esto se laguea, por que?creo que debe ser que esta leyendo y escribiedo
-  }
-  function log(logi) {
-    console.log(logi);
   }
   function sendMessage() {
     updateDoc(docRef, {
